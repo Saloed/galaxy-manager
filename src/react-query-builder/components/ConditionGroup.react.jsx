@@ -1,7 +1,7 @@
 import React from 'react'
 
 import Condition from './Condition.react'
-import {Button, InputGroup, ControlGroup, Card} from "@blueprintjs/core";
+import {Button, InputGroup, ControlGroup, Card, TextArea, Classes, Alert, Intent} from "@blueprintjs/core";
 
 /**
  * ConditionGroup react component
@@ -12,7 +12,9 @@ const ConditionGroup = React.createClass({
         parent: React.PropTypes.object,
         index: React.PropTypes.number.isRequired
     },
-
+    getInitialState() {
+        return {showDeleteAlert: false};
+    },
     addCondition: function (e) {
         this.props.query.children.push({
             type: 'Condition',
@@ -28,6 +30,7 @@ const ConditionGroup = React.createClass({
         this.props.query.children.push({
             type: 'ConditionGroup',
             objectKey: '',
+            description: '',
             children: []
         });
     },
@@ -41,6 +44,24 @@ const ConditionGroup = React.createClass({
     addKey: function (e) {
         this.props.query.set('objectKey', e.target.value)
     },
+
+    onFieldDescriptionChange: function (e) {
+        this.props.query.set('description', e.target.value)
+    },
+
+    onDeleteAlert: function (e) {
+        this.setState({showDeleteAlert: true})
+    },
+
+    handleDeleteCancel: function (e) {
+        this.setState({showDeleteAlert: false})
+    },
+
+    handleDeleteOk: function (e) {
+        this.setState({showDeleteAlert: false})
+        this.removeSelf(e)
+    },
+
 
     render: function () {
         var childrenViews = this.props.query.children.map(function (childQuery, index) {
@@ -60,15 +81,34 @@ const ConditionGroup = React.createClass({
                     <ControlGroup fill={false} vertical={false}>
                         {!this.props.isRoot && <InputGroup className="object key" placeholder={"Key name for object"}
                                                            defaultValue={this.props.query.objectKey}
-                                                           onChange={this.addKey}/>}
+                                                           onChange={this.addKey} required/>}
                         <Button className="conditionGroupButton addCondition" icon={"add"} text={"Field"}
                                 onClick={this.addCondition}/>
                         <Button className="conditionGroupButton addGroup" icon={"add"} onClick={this.addGroup}
                                 text={"Object"}/>
+                        <TextArea className="operand description" value={this.props.query.description}
+                                  onChange={this.onFieldDescriptionChange} placeholder={"description"} small={true}
+                                  large={false}/>
                         {!this.props.isRoot &&
-                        <Button className="conditionGroupButton removeGroup" icon="trash" onClick={this.removeSelf}
+                        <Button className="conditionGroupButton removeGroup" icon="trash" onClick={this.onDeleteAlert}
                                 text={"Delete"}/>}
                     </ControlGroup>
+
+                    <Alert
+                        className={"Delete alert"}
+                        cancelButtonText="Cancel"
+                        confirmButtonText="Delete"
+                        icon="trash"
+                        intent={Intent.DANGER}
+                        isOpen={this.state.showDeleteAlert}
+                        onCancel={this.handleDeleteCancel}
+                        onConfirm={this.handleDeleteOk}
+                    >
+                        <p>
+                            Are you sure you want to delete object?
+                        </p>
+                    </Alert>
+
 
                     <div className="childrenConditions">
                         {childrenViews}
