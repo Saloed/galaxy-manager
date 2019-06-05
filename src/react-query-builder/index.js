@@ -1,4 +1,4 @@
-import {QueryBuilder} from './components/QueryBuilder.react'
+import QueryBuilder from './components/QueryBuilder.react'
 
 
-export {QueryBuilder}
+export default QueryBuilder

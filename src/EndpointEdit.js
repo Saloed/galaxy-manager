@@ -13,7 +13,7 @@ import {
     FormGroup,
     InputGroup
 } from '@blueprintjs/core'
-import {QueryBuilder} from './react-query-builder'
+import QueryBuilder from './react-query-builder'
 
 class EndpointSchema extends React.Component {
     constructor(props) {

@@ -2,20 +2,19 @@ import React from 'react'
 
 import Condition from './Condition.react'
 import {Button, InputGroup, ControlGroup, Card, TextArea, Classes, Alert, Intent} from "@blueprintjs/core";
+import PropTypes from "prop-types";
 
 /**
  * ConditionGroup react component
  */
-const ConditionGroup = React.createClass({
-    propTypes: {
-        query: React.PropTypes.object.isRequired,
-        parent: React.PropTypes.object,
-        index: React.PropTypes.number.isRequired
-    },
-    getInitialState() {
-        return {showDeleteAlert: false};
-    },
-    addCondition: function (e) {
+class ConditionGroup extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {showDeleteAlert: false};
+        this.removeSelf = this.removeSelf.bind(this)
+    }
+
+    addCondition = () => (e) => {
         this.props.query.children.push({
             type: 'Condition',
             fieldType: 'string',
@@ -24,46 +23,52 @@ const ConditionGroup = React.createClass({
             example: '',
             description: ''
         });
-    },
+    }
 
-    addGroup: function (e) {
+
+    addGroup = () => (e) => {
         this.props.query.children.push({
             type: 'ConditionGroup',
             objectKey: '',
             description: '',
             children: []
         });
-    },
+    }
 
-    removeSelf: function (e) {
+
+    removeSelf (e)  {
         if (this.props.parent) {
             this.props.parent.children.splice(this.props.index, 1);
         }
-    },
+    }
 
-    addKey: function (e) {
+
+    addKey = () => (e) => {
         this.props.query.set('objectKey', e.target.value)
-    },
+    }
 
-    onFieldDescriptionChange: function (e) {
+    onFieldDescriptionChange = () => (e) => {
         this.props.query.set('description', e.target.value)
-    },
+    }
 
-    onDeleteAlert: function (e) {
+
+    onDeleteAlert = () => (e) => {
         this.setState({showDeleteAlert: true})
-    },
+    }
 
-    handleDeleteCancel: function (e) {
+
+    handleDeleteCancel = () => (e) => {
         this.setState({showDeleteAlert: false})
-    },
+    }
 
-    handleDeleteOk: function (e) {
+
+    handleDeleteOk = () => (e) => {
         this.setState({showDeleteAlert: false})
         this.removeSelf(e)
-    },
+    }
 
 
-    render: function () {
+    render() {
         var childrenViews = this.props.query.children.map(function (childQuery, index) {
             if (childQuery.type === 'ConditionGroup') {
                 return <ConditionGroup query={childQuery} parent={this.props.query} index={index} key={index}/>;
@@ -81,16 +86,16 @@ const ConditionGroup = React.createClass({
                     <ControlGroup fill={false} vertical={false}>
                         {!this.props.isRoot && <InputGroup className="object key" placeholder={"Key name for object"}
                                                            defaultValue={this.props.query.objectKey}
-                                                           onChange={this.addKey} required/>}
+                                                           onChange={this.addKey()} required/>}
                         <Button className="conditionGroupButton addCondition" icon={"add"} text={"Field"}
-                                onClick={this.addCondition}/>
-                        <Button className="conditionGroupButton addGroup" icon={"add"} onClick={this.addGroup}
+                                onClick={this.addCondition()}/>
+                        <Button className="conditionGroupButton addGroup" icon={"add"} onClick={this.addGroup()}
                                 text={"Object"}/>
                         <TextArea className="operand description" value={this.props.query.description}
-                                  onChange={this.onFieldDescriptionChange} placeholder={"description"} small={true}
+                                  onChange={this.onFieldDescriptionChange()} placeholder={"description"} small={true}
                                   large={false}/>
                         {!this.props.isRoot &&
-                        <Button className="conditionGroupButton removeGroup" icon="trash" onClick={this.onDeleteAlert}
+                        <Button className="conditionGroupButton removeGroup" icon="trash" onClick={this.onDeleteAlert()}
                                 text={"Delete"}/>}
                     </ControlGroup>
 
@@ -101,8 +106,8 @@ const ConditionGroup = React.createClass({
                         icon="trash"
                         intent={Intent.DANGER}
                         isOpen={this.state.showDeleteAlert}
-                        onCancel={this.handleDeleteCancel}
-                        onConfirm={this.handleDeleteOk}
+                        onCancel={this.handleDeleteCancel()}
+                        onConfirm={this.handleDeleteOk()}
                     >
                         <p>
                             Are you sure you want to delete object?
@@ -117,6 +122,12 @@ const ConditionGroup = React.createClass({
             </div>
         );
     }
-});
+};
+
+ConditionGroup.propTypes = {
+    query: PropTypes.object.isRequired,
+    parent: PropTypes.object,
+    index: PropTypes.number.isRequired
+}
 
 export default ConditionGroup

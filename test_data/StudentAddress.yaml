@@ -1,0 +1,188 @@
+name: StudentAddress
+description: ''
+sql: students_address.sql
+pagination_enabled: false
+pagination_key: null
+sql_params:
+- name: id
+  type: string
+  position: 0
+  description: ''
+  default: ''
+  example: ''
+params: []
+schema:
+  type: object
+  name: ''
+  description: ''
+  fields:
+    AddressType:
+      type: object
+      name: ''
+      description: ''
+      fields:
+        ID:
+          type: string
+          db_name: ID
+          description: ''
+          example: ''
+        AddressType:
+          type: string
+          db_name: null
+          description: ''
+          example: ''
+    country:
+      type: object
+      name: ''
+      description: ''
+      fields:
+        ID:
+          type: string
+          db_name: AddrF0_ID
+          description: ''
+          example: ''
+        country:
+          type: string
+          db_name: AddrF0
+          description: ''
+          example: ''
+    index:
+      type: object
+      name: ''
+      description: ''
+      fields:
+        ID:
+          type: string
+          db_name: AddrF1_ID
+          description: ''
+          example: ''
+        index:
+          type: string
+          db_name: AddrF1
+          description: ''
+          example: ''
+    region:
+      type: object
+      name: ''
+      description: ''
+      fields:
+        ID:
+          type: string
+          db_name: AddrF2_ID
+          description: ''
+          example: ''
+        region:
+          type: string
+          db_name: AddrF2
+          description: ''
+          example: ''
+    district:
+      type: object
+      name: ''
+      description: ''
+      fields:
+        ID:
+          type: string
+          db_name: AddrF3_ID
+          description: ''
+          example: ''
+        district:
+          type: string
+          db_name: AddrF3
+          description: ''
+          example: ''
+    city:
+      type: object
+      name: ''
+      description: ''
+      fields:
+        ID:
+          type: string
+          db_name: AddrF4_ID
+          description: ''
+          example: ''
+        city:
+          type: string
+          db_name: AddrF4
+          description: ''
+          example: ''
+    locality:
+      type: object
+      name: ''
+      description: ''
+      fields:
+        ID:
+          type: string
+          db_name: AddrF5_ID
+          description: ''
+          example: ''
+        locality:
+          type: string
+          db_name: AddrF5
+          description: ''
+          example: ''
+    street:
+      type: object
+      name: ''
+      description: ''
+      fields:
+        ID:
+          type: string
+          db_name: AddrF6_id
+          description: ''
+          example: ''
+        street:
+          type: string
+          db_name: AddrF6
+          description: ''
+          example: ''
+    homenumber:
+      type: object
+      name: ''
+      description: ''
+      fields:
+        ID:
+          type: string
+          db_name: AddrF7_id
+          description: ''
+          example: ''
+        homenumber:
+          type: string
+          db_name: AddrF7
+          description: ''
+          example: ''
+    corpnumber:
+      type: object
+      name: ''
+      description: ''
+      fields:
+        ID:
+          type: string
+          db_name: AddrF8_id
+          description: ''
+          example: ''
+        corpnumber:
+          type: string
+          db_name: AddrF8
+          description: ''
+          example: ''
+    flatnumber:
+      type: object
+      name: ''
+      description: ''
+      fields:
+        ID:
+          type: string
+          db_name: AddrF9_id
+          description: ''
+          example: ''
+        flatnumber:
+          type: string
+          db_name: AddrF9
+          description: ''
+          example: ''
+    kladrstreet:
+      type: string
+      db_name: kladrstreet
+      description: ''
+      example: ''

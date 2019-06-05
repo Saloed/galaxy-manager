@@ -10,6 +10,7 @@ import {
     Intent,
     Card
 } from "@blueprintjs/core";
+import PropTypes from "prop-types";
 
 // Comparison operators
 var operators = [
@@ -37,74 +38,74 @@ function getEndpoints() {
 /**
  * Condition react component
  */
-const Condition = React.createClass({
-    propTypes: {
-        query: React.PropTypes.object.isRequired,
-        parent: React.PropTypes.object.isRequired,
-        index: React.PropTypes.number.isRequired
-    },
-    getInitialState() {
-        return {showDeleteAlert: false};
-    },
-    onFieldTypeChange: function (e) {
+class Condition extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {showDeleteAlert: false};
+        this.removeSelf = this.removeSelf.bind(this);
+    }
+
+    onFieldTypeChange = () => (e) => {
         const value = e.target.value
         this.props.query.set('fieldType', value);
         this.isSelectType = value === 'select';
-    },
+    }
 
-    onFieldNameChange: function (e) {
+    onFieldNameChange = () => (e) => {
         this.props.query.set('fieldName', e.target.value);
-    },
+    }
 
-    onEndpointSelectChange: function (e) {
+    onEndpointSelectChange = () => (e) => {
         this.props.query.set('endpointSelect', e.target.value);
-    },
+    }
 
-    onFieldDescriptionChange: function (e) {
+    onFieldDescriptionChange = () => (e) => {
         this.props.query.set('description', e.target.value);
-    },
+    }
 
-    onFieldExampleChange: function (e) {
+    onFieldExampleChange = () => (e) => {
         this.props.query.set('example', e.target.value);
-    },
+    }
 
-    removeSelf: function (e) {
+    removeSelf(e) {
         if (this.props.parent) {
             this.props.parent.children.splice(this.props.index, 1);
         }
-    },
-    onDeleteAlert: function (e) {
+    }
+
+    onDeleteAlert = () => (e) => {
         this.setState({showDeleteAlert: true})
-    },
+    }
 
-    handleDeleteCancel: function (e) {
+    handleDeleteCancel = () => (e) => {
         this.setState({showDeleteAlert: false})
-    },
+    }
 
-    handleDeleteOk: function (e) {
+    handleDeleteOk = () => (e) => {
         this.setState({showDeleteAlert: false})
         this.removeSelf(e)
-    },
-    render: function () {
+    }
+
+    render() {
         return (
             <div className="query condition">
                 <ControlGroup fill={false} vertical={false}>
                     <InputGroup className="operand name" defaultValue={this.props.query.fieldName}
-                                onChange={this.onFieldNameChange} placeholder={"name"} required/>
+                                onChange={this.onFieldNameChange()} placeholder={"name"} required/>
                     <HTMLSelect className="operators" value={this.props.query.fieldType}
-                                onChange={this.onFieldTypeChange} required>
+                                onChange={this.onFieldTypeChange()} required>
                         {operatorOptions}
                     </HTMLSelect>
                     {this.isSelectType && <HTMLSelect className="endpoints" value={this.props.query.endpointSelect}
-                                                      onChange={this.onEndpointSelectChange} required>
+                                                      onChange={this.onEndpointSelectChange()} required>
                         {getEndpoints()}
                     </HTMLSelect>}
                     <InputGroup className="operand example" value={this.props.query.example}
-                                onChange={this.onFieldExampleChange} placeholder={"example"}/>
+                                onChange={this.onFieldExampleChange()} placeholder={"example"}/>
                     <TextArea className="operand description" value={this.props.query.description}
-                              onChange={this.onFieldDescriptionChange} placeholder={"description"} small={true}
+                              onChange={this.onFieldDescriptionChange()} placeholder={"description"} small={true}
                               large={false}/>
-                    <Button className="conditionButton removeCondition" icon={"trash"} onClick={this.onDeleteAlert}
+                    <Button className="conditionButton removeCondition" icon={"trash"} onClick={this.onDeleteAlert()}
                             text={"Delete"}/>
                 </ControlGroup>
                 <Alert
@@ -114,8 +115,8 @@ const Condition = React.createClass({
                     icon="trash"
                     intent={Intent.DANGER}
                     isOpen={this.state.showDeleteAlert}
-                    onCancel={this.handleDeleteCancel}
-                    onConfirm={this.handleDeleteOk}
+                    onCancel={this.handleDeleteCancel()}
+                    onConfirm={this.handleDeleteOk()}
                 >
                     <p>
                         Are you sure you want to delete field?
@@ -124,6 +125,12 @@ const Condition = React.createClass({
             </div>
         );
     }
-});
+};
+
+Condition.propTypes = {
+    query: PropTypes.object.isRequired,
+    parent: PropTypes.object.isRequired,
+    index: PropTypes.number.isRequired
+}
 
 export default Condition

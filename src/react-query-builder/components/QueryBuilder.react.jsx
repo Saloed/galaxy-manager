@@ -3,41 +3,28 @@ import Freezer from 'freezer-js'
 import ConditionGroup from './ConditionGroup.react';
 import Condition from './Condition.react'
 import '../stylesheets/react-query-builder.scss'
+import PropTypes from "prop-types";
 
 /**
  * QueryBuilder react component
  */
-export const QueryBuilder = React.createClass({
-    propTypes: {
-        initialQuery: React.PropTypes.object,
-        onQueryUpdate: React.PropTypes.func
-    },
-
-    getDefaultProps: function() {
-        return {
-            initialQuery: {
-                type: 'ConditionGroup',
-                objectKey: 'root',
-                children: []
-            },
-            onQueryUpdate: function(queryBuilder) {}
-        };
-    },
-
-    getInitialState: function() {
-        var queryFreezerStore = new Freezer(this.props.initialQuery);
-        var query = queryFreezerStore.get();
-
-        return {
+class QueryBuilder extends React.Component {
+    constructor(props) {
+        super(props);
+        const queryFreezerStore = new Freezer(this.props.initialQuery);
+        const query = queryFreezerStore.get();
+        this.state = {
             queryFreezerStore: queryFreezerStore,
             query: query
         };
-    },
+        this.getQuery = this.getQuery.bind(this)
+    }
 
-    componentDidMount: function() {
+
+    componentDidMount() {
         // Update state every time query changes
-        var queryListener = this.state.query.getListener();
-        queryListener.on('update', function(updated) {
+        const queryListener = this.state.query.getListener();
+        queryListener.on('update', function (updated) {
             this.setState({
                 query: updated
             });
@@ -46,21 +33,19 @@ export const QueryBuilder = React.createClass({
         }.bind(this));
 
         this.props.onQueryUpdate(this);
-    },
+    }
 
-    getQuery: function() {
+    getQuery() {
         return this.state.query;
-    },
+    }
 
-    render: function() {
-        var childView = null;
+    render() {
+        let childView = null;
         if (this.state.query.type === 'ConditionGroup') {
-            childView = <ConditionGroup query={this.state.query} isRoot={true} parent={null} index={0} />;
-        }
-        else if (this.state.query.type === 'Condition') {
-            childView = <Condition query={this.state.query} parent={null} index={0} />;
-        }
-        else {
+            childView = <ConditionGroup query={this.state.query} isRoot={true} parent={null} index={0}/>;
+        } else if (this.state.query.type === 'Condition') {
+            childView = <Condition query={this.state.query} parent={null} index={0}/>;
+        } else {
             console.error('invalid type: type must be ConditionGroup or Condition');
             return null;
         }
@@ -71,6 +56,20 @@ export const QueryBuilder = React.createClass({
             </div>
         );
     }
-});
+};
+QueryBuilder.propTypes = {
+    initialQuery: PropTypes.object,
+    onQueryUpdate: PropTypes.func
+};
+QueryBuilder.defaultProps = {
+    initialQuery: {
+        type: 'ConditionGroup',
+        objectKey: 'root',
+        children: []
+    },
+    onQueryUpdate: function (queryBuilder) {
+    }
+};
 
 
+export default QueryBuilder

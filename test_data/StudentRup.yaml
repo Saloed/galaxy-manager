@@ -1,0 +1,28 @@
+name: StudentRup
+description: ''
+sql: students_rup.sql
+pagination_enabled: true
+pagination_key: RUPNREC
+sql_params:
+- name: id
+  type: string
+  position: 0
+  description: ''
+  default: ''
+  example: ''
+params: []
+schema:
+  type: object
+  name: ''
+  description: ''
+  fields:
+    NREC:
+      type: string
+      db_name: RUPNREC
+      description: ''
+      example: ''
+    Year:
+      type: string
+      db_name: RYear
+      description: ''
+      example: ''
