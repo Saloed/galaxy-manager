@@ -70,20 +70,48 @@ function getQueryFromLine(query) {
 
 
 function getTokensFromSelectToFrom(tokens) {
-    const selectTokenIdx = tokens.findIndex(it => it.type === 'keyword' && it.value === 'select')
-    const fromTokenIdx = tokens.findIndex(it => it.type === 'keyword' && it.value === 'from')
+    const selectTokenIdx = tokens.findIndex(it => it.type === 'keyword' && it.value === 'select');
+    const fromTokenIdx = tokens.findIndex(it => it.type === 'keyword' && it.value === 'from');
     return tokens.slice(selectTokenIdx, fromTokenIdx)
 }
 
-const tokenizeSql = (query) => {
-    const queryObj = getQueryFromLine(query)
-    tokenise(queryObj)
-    let tokens = []
-    queryObj.lines.map(line => {
-        tokens.push(...line.tokens)
-    })
-    const nameTokens = getTokensFromSelectToFrom(tokens)
-    console.log(nameTokens)
+function collectNames(tokens) {
+    let names = [];
+    for (let i = 0; i < tokens.length; i++) {
+        const token = tokens[i];
+        if (token.type === "???" && token.value === "as") {
+            const nextToken = tokens[i + 1];
+            if (nextToken) {
+                names.push(nextToken)
+            }
+        }
+    }
+    return names.map(it => it.value)
+
 }
 
-export default tokenizeSql
+function recoverNames(originalQuery, names) {
+    const withoutComments = stripComments(originalQuery);
+    let queryElements = withoutComments.split("\n").flatMap(it => it.trim().split(/\s+/));
+    const queryElementsMap = {};
+    queryElements.forEach(it => {
+        const key = it.toLowerCase();
+        if (!queryElementsMap[key]) queryElementsMap[key] = it
+    });
+
+    return names.map(it => queryElementsMap[it] || it)
+}
+
+const getQueryFieldNames = (query) => {
+    const queryObj = getQueryFromLine(query);
+    tokenise(queryObj);
+    let tokens = [];
+    queryObj.lines.map(line => {
+        tokens.push(...line.tokens)
+    });
+    const nameTokens = getTokensFromSelectToFrom(tokens);
+    const names = collectNames(nameTokens);
+    return recoverNames(query, names)
+};
+
+export default getQueryFieldNames

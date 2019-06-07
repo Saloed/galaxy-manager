@@ -1,3 +1,3 @@
-import tokenize from './lexer'
+import getQueryFieldNames from './lexer'
 
-export default tokenize
+export default getQueryFieldNames

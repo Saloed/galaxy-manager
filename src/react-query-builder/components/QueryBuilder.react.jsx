@@ -2,6 +2,7 @@ import React from 'react'
 import Freezer from 'freezer-js'
 import ConditionGroup from './ConditionGroup.react';
 import Condition from './Condition.react'
+import SelectCondition from './SelectCondition.react'
 import '../stylesheets/react-query-builder.scss'
 import PropTypes from "prop-types";
 
@@ -45,6 +46,8 @@ class QueryBuilder extends React.Component {
             childView = <ConditionGroup query={this.state.query} isRoot={true} parent={null} index={0}/>;
         } else if (this.state.query.type === 'Condition') {
             childView = <Condition query={this.state.query} parent={null} index={0}/>;
+        } else if (this.state.query.type === 'SelectCondition') {
+            childView = <SelectCondition query={this.state.query} parent={null} index={0}/>;
         } else {
             console.error('invalid type: type must be ConditionGroup or Condition');
             return null;

@@ -12,47 +12,33 @@ import {
 } from "@blueprintjs/core";
 import PropTypes from "prop-types";
 
-// Comparison operators
-var operators = [
-    {value: 'string', display: 'string', className: 'type-str'},
-    {value: 'integer', display: 'integer', className: 'type-int'},
-    {value: 'boolean', display: 'boolean', className: 'type-bool'},
-    {value: 'datetime', display: 'datetime', className: 'type-datetime'}
-    ];
-
-// Array of options for operator select
-var operatorOptions = operators.map(function (operator, index) {
-    var classString = 'operator ' + operator.className;
-    return (<option className={classString} value={operator.value} key={index}>{operator.display}</option>);
-});
-
+function getEndpoints() {
+    const endpoints = ["a", "b", "c"]
+    return endpoints.map(function (operator, index) {
+        var classString = 'operator ' + operator;
+        return (<option className={classString} value={operator} key={index}>{operator}</option>);
+    })
+}
 
 /**
  * Condition react component
  */
-class Condition extends React.Component {
+class SelectCondition extends React.Component {
     constructor(props) {
         super(props);
         this.state = {showDeleteAlert: false};
         this.removeSelf = this.removeSelf.bind(this);
     }
-
-    onFieldTypeChange = () => (e) => {
-        const value = e.target.value
-        this.props.query.set('fieldType', value);
-    }
-
     onFieldNameChange = () => (e) => {
         this.props.query.set('fieldName', e.target.value);
     }
 
+    onEndpointSelectChange = () => (e) => {
+        this.props.query.set('endpointSelect', e.target.value);
+    }
 
     onFieldDescriptionChange = () => (e) => {
         this.props.query.set('description', e.target.value);
-    }
-
-    onFieldExampleChange = () => (e) => {
-        this.props.query.set('example', e.target.value);
     }
 
     removeSelf(e) {
@@ -80,12 +66,10 @@ class Condition extends React.Component {
                 <ControlGroup fill={false} vertical={false}>
                     <InputGroup className="operand name" defaultValue={this.props.query.fieldName}
                                 onChange={this.onFieldNameChange()} placeholder={"name"} required/>
-                    <HTMLSelect className="operators" value={this.props.query.fieldType}
-                                onChange={this.onFieldTypeChange()} required>
-                        {operatorOptions}
+                    <HTMLSelect className="endpoints" value={this.props.query.endpointSelect}
+                                                      onChange={this.onEndpointSelectChange()} required>
+                        {getEndpoints()}
                     </HTMLSelect>
-                    <InputGroup className="operand example" value={this.props.query.example}
-                                onChange={this.onFieldExampleChange()} placeholder={"example"}/>
                     <TextArea className="operand description" value={this.props.query.description}
                               onChange={this.onFieldDescriptionChange()} placeholder={"description"} small={true}
                               large={false}/>
@@ -111,10 +95,10 @@ class Condition extends React.Component {
     }
 };
 
-Condition.propTypes = {
+SelectCondition.propTypes = {
     query: PropTypes.object.isRequired,
     parent: PropTypes.object.isRequired,
     index: PropTypes.number.isRequired
 }
 
-export default Condition
+export default SelectCondition
