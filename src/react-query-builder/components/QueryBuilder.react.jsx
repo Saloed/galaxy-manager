@@ -17,14 +17,21 @@ class QueryBuilder extends React.Component {
         this.state = {
             queryFreezerStore: queryFreezerStore,
             query: query
-        };
+        }
+
         this.getQuery = this.getQuery.bind(this)
     }
 
-
     componentDidMount() {
-        // Update state every time query changes
-        const queryListener = this.state.query.getListener();
+        this.onQueryChange(this.state.query)
+    }
+
+    getQuery() {
+        return this.state.query;
+    }
+
+    onQueryChange = (query) => {
+        const queryListener = query.getListener();
         queryListener.on('update', function (updated) {
             this.setState({
                 query: updated
@@ -36,8 +43,14 @@ class QueryBuilder extends React.Component {
         this.props.onQueryUpdate(this);
     }
 
-    getQuery() {
-        return this.state.query;
+    updateQuery = (newQuery) => {
+        const queryFreezerStore = new Freezer(newQuery);
+        const query = queryFreezerStore.get();
+        this.setState({
+            queryFreezerStore: queryFreezerStore,
+            query: query
+        })
+        this.onQueryChange(query)
     }
 
     render() {
@@ -61,7 +74,7 @@ class QueryBuilder extends React.Component {
     }
 };
 QueryBuilder.propTypes = {
-    initialQuery: PropTypes.object,
+    initialQuery: PropTypes.object.isRequired,
     onQueryUpdate: PropTypes.func
 };
 QueryBuilder.defaultProps = {

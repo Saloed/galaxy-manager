@@ -1,19 +1,23 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {Intent, Menu, MenuItem, ControlGroup} from '@blueprintjs/core'
+import {ControlGroup, Intent, Menu, MenuItem} from '@blueprintjs/core'
 import yaml from 'js-yaml'
 import getQueryFieldNames from './sql-lexer'
 import EndpointEdit from "./EndpointEdit";
+import {convertDescription} from './converters'
 
 class App extends React.Component {
 
     constructor(props) {
         super(props);
+        this.modified_descriptions = {}
         this.state = {
-            selected_sql: null,
             sql_files: null,
-            descriptions: null
+            descriptions: null,
+            selected_sql: null,
+            selected_description: null
         }
+        this.endpointEditor = React.createRef()
     }
 
     onFileChange = () => (e) => {
@@ -50,26 +54,33 @@ class App extends React.Component {
     };
 
     onSqlFileSelect = (name) => (e) => {
-        this.setState({selected_sql: name})
-    };
-
-    renderDescriptionEditor = () => {
-        const selected = this.state.selected_sql
-        if (!selected) return null
-        const sql = this.state.sql_files[selected]
-        const description = this.state.descriptions[selected] || {
-            name: "",
-            description: "",
-            sql: sql.name,
-            sql_params: [],
-            pagination_enabled: false,
-            pagination_key: null,
-            params: [],
-            schema: null
+        const sql = this.state.sql_files[name]
+        if (!this.modified_descriptions[name]) {
+            const description = this.state.descriptions[name] || {
+                name: "",
+                description: "",
+                sql: sql.name,
+                sql_params: [],
+                pagination_enabled: false,
+                pagination_key: null,
+                params: [],
+                schema: {
+                    type: 'object',
+                    name: '',
+                    description: '',
+                    fields: {}
+                }
+            }
+            this.modified_descriptions[name] = convertDescription(description)
         }
-        return <EndpointEdit allSql={this.state.sql_files} allDescriptions={this.state.descriptions}
-                             sql={sql} description={description}/>
-    }
+        const description = this.modified_descriptions[name]
+        if (this.endpointEditor.current)
+            this.endpointEditor.current.endpointSave()
+        this.setState({
+            selected_sql: sql,
+            selected_description: description
+        }, () => this.endpointEditor.current.endpointChange())
+    };
 
     render() {
         if (this.state.sql_files) {
@@ -87,7 +98,10 @@ class App extends React.Component {
                                              onClick={this.onSqlFileSelect(name)}/>
                         })}
                     </Menu>
-                    {this.renderDescriptionEditor()}
+                    {this.state.selected_sql && <EndpointEdit ref={this.endpointEditor} allSql={this.state.sql_files}
+                                                              allDescriptions={this.state.descriptions}
+                                                              sql={this.state.selected_sql}
+                                                              description={this.state.selected_description}/>}
                 </ControlGroup>
             );
         } else return (<form onSubmit={this.onFileChange()}>
