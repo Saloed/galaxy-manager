@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {ControlGroup, Intent, Menu, MenuItem} from '@blueprintjs/core'
+import {ControlGroup, Intent, Menu, MenuItem} from '@blueprintjs/core/lib/esm/index'
 import yaml from 'js-yaml'
-import getQueryFieldNames from './sql-lexer'
-import EndpointEdit from "./EndpointEdit";
-import {convertDescription} from './converters'
+import getQueryFieldNames from '../sql-lexer'
+import EndpointEdit from "../EndpointEdit";
+import {convertDescription} from '../converters'
 
 class App extends React.Component {
 

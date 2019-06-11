@@ -1,9 +1,8 @@
 const path = require('path');
-const webpack = require('webpack');
-const webpackTargetElectronRenderer = require('webpack-target-electron-renderer');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-const config = {
-    entry: './src/entry.js',
+module.exports = {
+    entry: './src/renderer/index.js',
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: 'bundle.js'
@@ -30,13 +29,14 @@ const config = {
                 test: /\.jsx?$/,
                 exclude: /node_modules/,
                 use: {
-                    loader: 'babel-loader'
+                    loader: 'babel-loader',
                 }
             }
         ]
     },
-    plugins: [new webpack.HotModuleReplacementPlugin(),]
+    plugins: [
+        new HtmlWebpackPlugin({
+            template: path.join(__dirname, 'public/index.html')
+        })
+    ]
 }
-
-config.target = webpackTargetElectronRenderer(config);
-module.exports = config;

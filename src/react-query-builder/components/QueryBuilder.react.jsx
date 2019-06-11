@@ -3,7 +3,7 @@ import Freezer from 'freezer-js'
 import ConditionGroup from './ConditionGroup.react';
 import Condition from './Condition.react'
 import SelectCondition from './SelectCondition.react'
-import '../stylesheets/react-query-builder.scss'
+// import '../stylesheets/react-query-builder.scss'
 import PropTypes from "prop-types";
 
 /**
