@@ -26,20 +26,21 @@ class SelectCondition extends React.Component {
 
     onFieldNameChange = () => (e) => {
         this.props.query.set('fieldName', e.target.value);
-    }
+    };
 
     onEndpointSelectChange = () => (e) => {
         this.props.query.set('endpointSelect', e.target.value);
-    }
+    };
 
     onEndpointSelectParamChange = (param) => (e) => {
         // this.props.query.set('endpointSelect', e.target.value);
-        console.log(param + ' = ' + e.target.value)
-    }
+        const value = e.target.value === '' ? null : e.target.value;
+        console.log(param + ' = ' + value)
+    };
 
     onFieldDescriptionChange = () => (e) => {
         this.props.query.set('description', e.target.value);
-    }
+    };
 
     removeSelf(e) {
         if (this.props.parent) {
@@ -49,73 +50,80 @@ class SelectCondition extends React.Component {
 
     onDeleteAlert = () => (e) => {
         this.setState({showDeleteAlert: true})
-    }
+    };
 
     handleDeleteCancel = () => (e) => {
         this.setState({showDeleteAlert: false})
-    }
+    };
 
     handleDeleteOk = () => (e) => {
-        this.setState({showDeleteAlert: false})
+        this.setState({showDeleteAlert: false});
         this.removeSelf(e)
-    }
+    };
 
     getEndpoints = () => {
-        const endpoints = Object.values(this.props.allDescriptions)
+        const endpoints = Object.values(this.props.allDescriptions);
         return endpoints.map(function (operator, index) {
             const classString = 'operator ' + operator.name;
             return (<option className={classString} value={operator.name} key={index}>{operator.name}</option>);
         })
-    }
+    };
 
     renderParams = () => {
-        const endpointName = this.props.query.endpointSelect
-        const endpoints = Object.values(this.props.allDescriptions)
-        const endpoint = endpoints.find(it => it.name === endpointName)
-        if (!endpoint) return null
-        console.log(endpoint)
-        const requiredParams = endpoint.sql_params.concat(endpoint.params.filter(it => it.required))
-        const otherParams = endpoint.params.filter(it => !it.required)
-        const sql_fields = this.props.sql.fields
+        const endpointName = this.props.query.endpointSelect;
+        const endpoints = Object.values(this.props.allDescriptions);
+        const endpoint = endpoints.find(it => it.name === endpointName);
+        if (!endpoint) return null;
+        const requiredParams = endpoint.sql_params.concat(endpoint.params.filter(it => it.required));
+        const otherParams = endpoint.params.filter(it => !it.required);
+        const sql_fields = this.props.sql.fields;
+        const field_options = sql_fields.map(function (operator, index) {
+            const classString = 'operator ' + operator;
+            return (<option className={classString} value={operator} key={index}>{operator}</option>);
+        });
         return (
             <Card>
                 <ControlGroup fill={false} vertical={true}>
-                    {requiredParams.map(param =>
+                    {requiredParams.map((param, index) =>
                         <FormGroup
                             helperText={param.description}
                             inline={true}
                             label={param.name + ': ' + param.type}
                             labelFor="param-selector"
                             labelInfo="(required)"
+                            key={index}
                         >
                             <HTMLSelect
                                 id="param-selector"
                                 className="endpoints-select-param"
-                                value={this.props.query.params[param.name]}
+                                value={this.props.query.params[param.name] || ''}
                                 onChange={this.onEndpointSelectParamChange(param)}
                                 required
                             >
-                                {sql_fields}
+                                <option value=""/>
+                                {field_options}
                             </HTMLSelect>
 
 
                         </FormGroup>
                     )}
-                    {otherParams.map(param =>
+                    {otherParams.map((param, index) =>
                         <FormGroup
                             helperText={param.description}
                             inline={true}
                             label={param.name + ': ' + param.type}
                             labelFor="param-selector"
                             labelInfo="(optional)"
+                            key={index}
                         >
                             <HTMLSelect
                                 id="param-selector"
                                 className="endpoints-select-param"
-                                value={this.props.query.params[param.name]}
+                                value={this.props.query.params[param.name] || ''}
                                 onChange={this.onEndpointSelectParamChange(param)}
                             >
-                                {sql_fields}
+                                <option value=""/>
+                                {field_options}
                             </HTMLSelect>
 
 
@@ -124,7 +132,7 @@ class SelectCondition extends React.Component {
                 </ControlGroup>
             </Card>
         )
-    }
+    };
 
     render() {
         return (
@@ -160,12 +168,12 @@ class SelectCondition extends React.Component {
             </div>
         );
     }
-};
+}
 
 SelectCondition.propTypes = {
     query: PropTypes.object.isRequired,
     parent: PropTypes.object.isRequired,
     index: PropTypes.number.isRequired
-}
+};
 
 export default SelectCondition

@@ -140,11 +140,16 @@ function remove_balanced_parenthesis(query) {
 
 function get_field_names_definition_range(query) {
     const myQuery = query.replace(/(\r\n|\n|\r)/gm, " ");
-    const pattern = new RegExp("SELECT(.*?)(FROM|UNION|$)")
-    console.log(myQuery)
-    const parts = myQuery.match(pattern)
-    console.log(parts)
+    const pattern = new RegExp("SELECT(.*?)(FROM|UNION|$)", "i");
+    const parts = myQuery.match(pattern);
     return parts[1]
+}
+
+function get_field_names(query) {
+    return query.split(',').map(it => {
+        const parts = it.split(new RegExp('AS', "i"));
+        return parts[parts.length - 1]
+    }).map(it => it.trim())
 }
 
 const getQueryFieldNames = (query) => {
@@ -153,32 +158,32 @@ const getQueryFieldNames = (query) => {
         const parsed = flora_parser.parse(prepared_query);
         return parsed.columns.map(it => {
             const name = it.as || it.expr.column;
-            return restore_name(name)
+            return restore_name(name).trim()
         })
     } catch (e) {
-        console.log(e)
-    }
-    console.log(query)
-    const withoutParenthesis = remove_balanced_parenthesis(query);
-    const fieldDefinitions = get_field_names_definition_range(withoutParenthesis)
-    console.log(fieldDefinitions)
 
-    // const queryObj = getQueryFromLine(query);
-    // console.log(queryObj);
-    // tokenise(queryObj);
-    // let tokens = [];
-    // queryObj.lines.map(line => {
-    //     tokens.push(...line.tokens)
-    // });
-    // const nameTokens = getTokensFromSelectToFrom(tokens);
-    // console.log(nameTokens)
-    // const selectFromStr = nameTokens.map(it => it.value).join(' ')
-    // const names = collectNames(nameTokens);
-    // const aaa = selectFromStr.replace(new RegExp('\\$', 'g'), 'DOLLAR_SIGN_RESERVED')
-    // console.log(aaa)
-    // const ast = parser.parse(aaa);
-    // console.log(ast)
-    // return recoverNames(query, names)
+    }
+    const withoutParenthesis = remove_balanced_parenthesis(query);
+    try {
+        const prepared_query = prepare_query(withoutParenthesis);
+        const parsed = flora_parser.parse(prepared_query);
+        return parsed.columns.map(it => {
+            const name = it.as || it.expr.column;
+            return restore_name(name).trim()
+        })
+    } catch (e) {
+
+    }
+    const fieldDefinitions = get_field_names_definition_range(withoutParenthesis);
+    return get_field_names(fieldDefinitions)
 };
 
-export default getQueryFieldNames
+function onlyUnique(value, index, self) {
+    return self.indexOf(value) === index;
+}
+
+const uniqueFieldNames = (query) => {
+    return getQueryFieldNames(query).filter(onlyUnique);
+}
+
+export default uniqueFieldNames

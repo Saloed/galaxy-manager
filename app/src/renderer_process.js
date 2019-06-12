@@ -41,7 +41,6 @@ function processFile(fileName, sql_files, descriptions) {
     const data = fs.readFileSync(fileName, 'UTF-8');
     const name = path.basename(fileName);
     if (fileName.endsWith('.sql')) {
-        console.log(fileName)
         const fieldNames = getQueryFieldNames(data);
         sql_files[name] = {
             name: name,
