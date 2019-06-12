@@ -80,11 +80,23 @@ class ConditionGroup extends React.Component {
     render() {
         var childrenViews = this.props.query.children.map(function (childQuery, index) {
             if (childQuery.type === 'ConditionGroup') {
-                return <ConditionGroup query={childQuery} parent={this.props.query} index={index} key={index}/>;
+                return <ConditionGroup query={childQuery} parent={this.props.query} index={index} key={index}
+                                        allSql={this.props.allSql}
+                                        allDescriptions={this.props.allDescriptions}
+                                        sql={this.props.sql}
+                                        description={this.props.description}/>;
             } else if (childQuery.type === 'Condition') {
-                return <Condition query={childQuery} parent={this.props.query} index={index} key={index}/>;
+                return <Condition query={childQuery} parent={this.props.query} index={index} key={index}
+                                        allSql={this.props.allSql}
+                                        allDescriptions={this.props.allDescriptions}
+                                        sql={this.props.sql}
+                                        description={this.props.description}/>;
             } else if (childQuery.type === 'SelectCondition') {
-                return <SelectCondition query={childQuery} parent={this.props.query} index={index} key={index}/>;
+                return <SelectCondition query={childQuery} parent={this.props.query} index={index} key={index}
+                                        allSql={this.props.allSql}
+                                        allDescriptions={this.props.allDescriptions}
+                                        sql={this.props.sql}
+                                        description={this.props.description}/>;
             } else {
                 console.error('invalid type: type must be ConditionGroup or Condition');
                 return null;

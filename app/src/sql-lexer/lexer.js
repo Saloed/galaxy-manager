@@ -1,6 +1,13 @@
 import {tokenise} from 'sql-lint/dist/src/lexer/lexer'
 import {Query} from 'sql-lint/dist/src/reader/query'
 import {Line} from 'sql-lint/dist/src/reader/line'
+import {Select} from 'sql-lint/dist/src/lexer/statements/select'
+
+const tssql_parser = require('js-tsql-parser');
+const js_parser = require('js-sql-parser');
+const {lexer, parser} = require('sql-parser');
+const {Parser} = require('flora-sql-parser');
+const flora_parser = new Parser();
 
 export function putContentIntoLines(contents) {
     let lineNumber = 1;
@@ -72,7 +79,7 @@ function getQueryFromLine(query) {
 function getTokensFromSelectToFrom(tokens) {
     const selectTokenIdx = tokens.findIndex(it => it.type === 'keyword' && it.value === 'select');
     const fromTokenIdx = tokens.findIndex(it => it.type === 'keyword' && it.value === 'from');
-    return tokens.slice(selectTokenIdx, fromTokenIdx)
+    return tokens.slice(selectTokenIdx, fromTokenIdx + 1)
 }
 
 function collectNames(tokens) {
@@ -102,16 +109,76 @@ function recoverNames(originalQuery, names) {
     return names.map(it => queryElementsMap[it] || it)
 }
 
-const getQueryFieldNames = (query) => {
-    const queryObj = getQueryFromLine(query);
-    tokenise(queryObj);
-    let tokens = [];
-    queryObj.lines.map(line => {
-        tokens.push(...line.tokens)
+function prepare_query(query) {
+    return query.replace(new RegExp('\\$', 'g'), 'DOLLAR_SIGN_RESERVED')
+        .replace(new RegExp('%s', 'g'), 'PERCENT_SIGN_RESERVED')
+        .replace(new RegExp('#', 'g'), 'DIEZ_SIGN_RESERVED')
+        .replace(new RegExp('&', 'g'), 'AND')
+        .replace(new RegExp('0[xX][0-9a-fA-F]+', 'g'), '0')
+}
+
+function restore_name(name) {
+    return name.replace(new RegExp('DOLLAR_SIGN_RESERVED', 'g'), '$')
+        .replace(new RegExp('PERCENT_SIGN_RESERVED', 'g'), '%s')
+        .replace(new RegExp('DIEZ_SIGN_RESERVED', 'g'), '#')
+}
+
+function remove_balanced_parenthesis(query) {
+    let count = 0;
+    const result = [];
+    query.split('').forEach(ch => {
+        if (ch === '(') {
+            count++
+        } else if (ch === ')') {
+            count--
+        } else if (count === 0) {
+            result.push(ch)
+        }
     });
-    const nameTokens = getTokensFromSelectToFrom(tokens);
-    const names = collectNames(nameTokens);
-    return recoverNames(query, names)
+    return result.join('')
+}
+
+function get_field_names_definition_range(query) {
+    const myQuery = query.replace(/(\r\n|\n|\r)/gm, " ");
+    const pattern = new RegExp("SELECT(.*?)(FROM|UNION|$)")
+    console.log(myQuery)
+    const parts = myQuery.match(pattern)
+    console.log(parts)
+    return parts[1]
+}
+
+const getQueryFieldNames = (query) => {
+    try {
+        const prepared_query = prepare_query(query);
+        const parsed = flora_parser.parse(prepared_query);
+        return parsed.columns.map(it => {
+            const name = it.as || it.expr.column;
+            return restore_name(name)
+        })
+    } catch (e) {
+        console.log(e)
+    }
+    console.log(query)
+    const withoutParenthesis = remove_balanced_parenthesis(query);
+    const fieldDefinitions = get_field_names_definition_range(withoutParenthesis)
+    console.log(fieldDefinitions)
+
+    // const queryObj = getQueryFromLine(query);
+    // console.log(queryObj);
+    // tokenise(queryObj);
+    // let tokens = [];
+    // queryObj.lines.map(line => {
+    //     tokens.push(...line.tokens)
+    // });
+    // const nameTokens = getTokensFromSelectToFrom(tokens);
+    // console.log(nameTokens)
+    // const selectFromStr = nameTokens.map(it => it.value).join(' ')
+    // const names = collectNames(nameTokens);
+    // const aaa = selectFromStr.replace(new RegExp('\\$', 'g'), 'DOLLAR_SIGN_RESERVED')
+    // console.log(aaa)
+    // const ast = parser.parse(aaa);
+    // console.log(ast)
+    // return recoverNames(query, names)
 };
 
 export default getQueryFieldNames

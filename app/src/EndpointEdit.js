@@ -11,8 +11,8 @@ class EndpointSchema extends React.Component {
     }
 
     schemaChange = () => {
-        console.log(this.props.description.schema)
         this.queryBuilder.current.updateQuery(this.props.description.schema)
+
     }
 
     schemaSave = () => {
@@ -20,7 +20,13 @@ class EndpointSchema extends React.Component {
     }
 
     render() {
-        return <QueryBuilder ref={this.queryBuilder} initialQuery={this.props.description.schema}/>
+        return <QueryBuilder ref={this.queryBuilder}
+                             initialQuery={this.props.description.schema}
+                             allSql={this.props.allSql}
+                             allDescriptions={this.props.allDescriptions}
+                             sql={this.props.sql}
+                             description={this.props.description}
+        />
     }
 }
 
