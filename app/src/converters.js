@@ -4,6 +4,8 @@ export function convertToSchema(original, parent = 'root') {
             type: 'ConditionGroup',
             objectKey: parent,
             name: original.name,
+            many: original.many || false,
+            aggregation_field: original.many && original.aggregation_field,
             description: original.description,
             children: Object.keys(original.fields).map(name => {
                 const field = original.fields[name];
@@ -14,8 +16,10 @@ export function convertToSchema(original, parent = 'root') {
         return {
             type: 'SelectCondition',
             fieldName: parent,
-            endpointSelect: original.endpoint,
-            params: original.params,
+            endpoint: {
+                name: original.endpoint,
+                params: original.params
+            },
             description: ''
         }
     } else {

@@ -12,9 +12,10 @@ import {
     Alert,
     Intent,
     ButtonGroup,
-    FormGroup
+    FormGroup, Switch, HTMLSelect
 } from "@blueprintjs/core";
 import PropTypes from "prop-types";
+import {fieldOptionsForSql} from "../../utils";
 
 /**
  * ConditionGroup react component
@@ -41,8 +42,10 @@ class ConditionGroup extends React.Component {
         this.props.query.children.push({
             type: 'SelectCondition',
             fieldName: '',
-            endpointSelect: '',
-            params: [],
+            endpoint: {
+                name: '',
+                params: {}
+            },
             description: ''
         });
     }
@@ -53,6 +56,8 @@ class ConditionGroup extends React.Component {
             objectKey: '',
             name: '',
             description: '',
+            many: false,
+            aggregation_field: null,
             children: []
         });
     }
@@ -77,6 +82,15 @@ class ConditionGroup extends React.Component {
         this.props.query.set('description', e.target.value)
     }
 
+    handleAggregationManyChange = () => (e) => {
+        this.props.query.set('many', e.target.checked)
+    }
+
+    onAggregationKeyChange = () => (e) => {
+        const value = e.target.value === '' ? null : e.target.value;
+        this.props.query.set('aggregation_field', value)
+
+    };
 
     onDeleteAlert = () => (e) => {
         this.setState({showDeleteAlert: true})
@@ -95,122 +109,163 @@ class ConditionGroup extends React.Component {
 
 
     render() {
-        var childrenViews = this.props.query.children.map(function (childQuery, index) {
+        const childrenViews = this.props.query.children.map(function (childQuery, index) {
             if (childQuery.type === 'ConditionGroup') {
                 return <ConditionGroup query={childQuery} parent={this.props.query} index={index} key={index}
                                        allSql={this.props.allSql}
                                        allDescriptions={this.props.allDescriptions}
                                        sql={this.props.sql}
-                                       description={this.props.description}/>;
+                                       description={this.props.description}
+                                       aggregationEnabled={this.props.aggregationEnabled}
+                />;
             } else if (childQuery.type === 'Condition') {
                 return <Condition query={childQuery} parent={this.props.query} index={index} key={index}
                                   allSql={this.props.allSql}
                                   allDescriptions={this.props.allDescriptions}
                                   sql={this.props.sql}
-                                  description={this.props.description}/>;
+                                  description={this.props.description}
+                />;
             } else if (childQuery.type === 'SelectCondition') {
                 return <SelectCondition query={childQuery} parent={this.props.query} index={index} key={index}
                                         allSql={this.props.allSql}
                                         allDescriptions={this.props.allDescriptions}
                                         sql={this.props.sql}
-                                        description={this.props.description}/>;
+                                        description={this.props.description}
+                />;
             } else {
                 console.error('invalid type: type must be ConditionGroup or Condition');
                 return null;
             }
         }.bind(this));
-
-        return (
+        const element = (
             <div className="query conditionGroup">
-                <Card interactive={true}>
-                    {!this.props.isRoot && <ControlGroup fill={false} vertical={true}>
-                        <ControlGroup vertical={false}>
-                            <FormGroup
-                                label={"Object key field"}
-                                labelInfo={"(required)"}
-                                labelFor={"obj-key"}
-                                style={{marginRight: 5}}
-                            >
-                                <InputGroup id={"obj-key"}
-                                            className="object key"
-                                            placeholder={"Key name for object"}
-                                            defaultValue={this.props.query.objectKey}
-                                            onChange={this.addKey()}
-                                            required/>
-                            </FormGroup>
-                            <FormGroup
-                                label={"Object name"}
-                                labelInfo={"(optional)"}
-                                labelFor={"obj-name"}
-                                style={{marginRight: 5}}
-                            >
-                                <InputGroup id={"obj-name"}
-                                            className="object name"
-                                            placeholder={"Name of object"}
-                                            defaultValue={this.props.query.name}
-                                            onChange={this.addObjectName()}
-                                />
-                            </FormGroup>
-                            <Button className="conditionGroupButton removeGroup"
-                                    icon="trash"
-                                    onClick={this.onDeleteAlert()}
-                                    text={"Delete"}
-                                    intent="danger"
-                                    minimal={true}
-                            />
-
-                        </ControlGroup>
-
+                {!this.props.isRoot && <ControlGroup fill={false} vertical={true}>
+                    <ControlGroup vertical={false}>
                         <FormGroup
-                            label={"Object description"}
-                            labelInfo={"(optional)"}
-                            labelFor={"obj-desc"}
+                            label={"Object key field"}
+                            labelInfo={"(required)"}
+                            labelFor={"obj-key"}
+                            style={{marginRight: 5}}
                         >
-                            <TextArea id={"obj-desc"}
-                                      className="operand description"
-                                      value={this.props.query.description}
-                                      onChange={this.onFieldDescriptionChange()}
-                                      placeholder={"description"}
-                                      small={true}
-                                      large={false}/>
+                            <InputGroup id={"obj-key"}
+                                        className="object key"
+                                        placeholder={"Key name for object"}
+                                        defaultValue={this.props.query.objectKey}
+                                        onChange={this.addKey()}
+                                        required/>
                         </FormGroup>
+                        <FormGroup
+                            label={"Object name"}
+                            labelInfo={this.props.query.many ? "(required)" : "(optional)"}
+                            labelFor={"obj-name"}
+                            style={{marginRight: 5}}
+                        >
+                            <InputGroup id={"obj-name"}
+                                        className="object name"
+                                        placeholder={"Name of object"}
+                                        defaultValue={this.props.query.name}
+                                        onChange={this.addObjectName()}
+                                        required={this.props.query.many}
+                            />
+                        </FormGroup>
+                        {this.props.aggregationEnabled && <FormGroup
+                            label={"Many objects field"}
+                            labelInfo={"(optional)"}
+                            labelFor={"many"}
+                            helperText="Enables aggregation of this object with selected key"
+                            style={{marginRight: 5}}
+                        >
+                            <Switch id={'many'}
+                                    checked={this.props.query.many}
+                                    label="Many"
+                                    onChange={this.handleAggregationManyChange()}
+                            />
+                        </FormGroup>}
+                        {this.props.query.many && <FormGroup
+                            label={"Aggregation key"}
+                            labelFor="param-selector"
+                            labelInfo="(required)"
+                            style={{marginRight: 5}}
+                        >
+                            <HTMLSelect
+                                id="param-selector"
+                                className="endpoints-select-param"
+                                value={this.props.query.aggregation_field || ''}
+                                onChange={this.onAggregationKeyChange()}
+                            >
+                                <option value=""/>
+                                {fieldOptionsForSql(this.props.sql)}
+                            </HTMLSelect>
+                        </FormGroup>
+                        }
+                        <Button className="conditionGroupButton removeGroup"
+                                icon="trash"
+                                onClick={this.onDeleteAlert()}
+                                text={"Delete"}
+                                intent="danger"
+                                minimal={true}
+                        />
+
                     </ControlGroup>
-                    }
 
-                    <Alert
-                        className={"Delete alert"}
-                        cancelButtonText="Cancel"
-                        confirmButtonText="Delete"
-                        icon="trash"
-                        intent={Intent.DANGER}
-                        isOpen={this.state.showDeleteAlert}
-                        onCancel={this.handleDeleteCancel()}
-                        onConfirm={this.handleDeleteOk()}
+                    <FormGroup
+                        label={"Object description"}
+                        labelInfo={"(optional)"}
+                        labelFor={"obj-desc"}
                     >
-                        <p>
-                            Are you sure you want to delete object?
-                        </p>
-                    </Alert>
+                        <TextArea id={"obj-desc"}
+                                  className="operand description"
+                                  value={this.props.query.description}
+                                  onChange={this.onFieldDescriptionChange()}
+                                  placeholder={"description"}
+                                  small={true}
+                                  large={false}/>
+                    </FormGroup>
+                </ControlGroup>
+                }
+
+                <Alert
+                    className={"Delete alert"}
+                    cancelButtonText="Cancel"
+                    confirmButtonText="Delete"
+                    icon="trash"
+                    intent={Intent.DANGER}
+                    isOpen={this.state.showDeleteAlert}
+                    onCancel={this.handleDeleteCancel()}
+                    onConfirm={this.handleDeleteOk()}
+                >
+                    <p>
+                        Are you sure you want to delete object?
+                    </p>
+                </Alert>
 
 
-                    <div className="childrenConditions">
-                        {childrenViews}
-                    </div>
-                    <ButtonGroup>
-                        <Button className="conditionGroupButton addCondition" icon={"add"} text={"Field"}
-                                onClick={this.addCondition()}
-                                style={{marginRight: 5}}
-                        />
-                        <Button className="conditionGroupButton addSelectCondition" icon={"add"} text={"Select"}
-                                onClick={this.addSelectCondition()}
-                                style={{marginRight: 5}}
-                        />
-                        <Button className="conditionGroupButton addGroup" icon={"add"} onClick={this.addGroup()}
-                                text={"Object"}/>
-                    </ButtonGroup>
-                </Card>
+                <div className="childrenConditions">
+                    {childrenViews}
+                </div>
+                <ButtonGroup>
+                    <Button className="conditionGroupButton addCondition" icon={"add"} text={"Field"}
+                            onClick={this.addCondition()}
+                            style={{marginRight: 5}}
+                    />
+                    <Button className="conditionGroupButton addSelectCondition" icon={"add"} text={"Select"}
+                            onClick={this.addSelectCondition()}
+                            style={{marginRight: 5}}
+                    />
+                    <Button className="conditionGroupButton addGroup" icon={"add"} onClick={this.addGroup()}
+                            text={"Object"}/>
+                </ButtonGroup>
             </div>
         );
+        if (!this.props.isRoot) {
+            return (
+                <Card interactive={true}>
+                    {element}
+                </Card>
+            )
+        } else {
+            return element
+        }
     }
 };
 

@@ -30,13 +30,30 @@ class SelectCondition extends React.Component {
     };
 
     onEndpointSelectChange = () => (e) => {
-        this.props.query.set('endpointSelect', e.target.value);
+        const endpointName = e.target.value;
+        const endpoints = Object.values(this.props.allDescriptions);
+        const endpoint = endpoints.find(it => it.name === endpointName);
+        if (!endpoint) return null;
+        const requiredParams = endpoint.sql_params.concat(endpoint.params.filter(it => it.required)).map(it => it.name);
+        const otherParams = endpoint.params.filter(it => !it.required).map(it => it.name);
+        const paramNames = requiredParams.concat(otherParams)
+        let newParams = {};
+        paramNames.forEach(it => newParams[it] = null)
+        const newEndpoint = {
+            name: endpointName,
+            params: newParams
+        }
+        this.props.query.set('endpoint', newEndpoint);
     };
 
+
     onEndpointSelectParamChange = (param) => (e) => {
-        // this.props.query.set('endpointSelect', e.target.value);
         const value = e.target.value === '' ? null : e.target.value;
-        console.log(param + ' = ' + value)
+        const endpoint = this.props.query.endpoint
+        let params = {...endpoint.params};
+        params[param.name] = value;
+        const newEndpoint = {name: endpoint.name, params: params}
+        this.props.query.set('endpoint', newEndpoint);
     };
 
     onFieldDescriptionChange = () => (e) => {
@@ -71,7 +88,7 @@ class SelectCondition extends React.Component {
     };
 
     renderParams = () => {
-        const endpointName = this.props.query.endpointSelect;
+        const endpointName = this.props.query.endpoint.name;
         const endpoints = Object.values(this.props.allDescriptions);
         const endpoint = endpoints.find(it => it.name === endpointName);
         if (!endpoint) return null;
@@ -91,7 +108,7 @@ class SelectCondition extends React.Component {
                         <HTMLSelect
                             id="param-selector"
                             className="endpoints-select-param"
-                            value={this.props.query.params[param.name] || ''}
+                            value={this.props.query.endpoint.params[param.name] || ''}
                             onChange={this.onEndpointSelectParamChange(param)}
                             required
                         >
@@ -114,7 +131,7 @@ class SelectCondition extends React.Component {
                         <HTMLSelect
                             id="param-selector"
                             className="endpoints-select-param"
-                            value={this.props.query.params[param.name] || ''}
+                            value={this.props.query.endpoint.params[param.name] || ''}
                             onChange={this.onEndpointSelectParamChange(param)}
                         >
                             <option value=""/>
@@ -152,7 +169,7 @@ class SelectCondition extends React.Component {
                                        style={{marginRight: 5}}>
                                 <HTMLSelect id={"endpoint"}
                                             className="endpoints"
-                                            value={this.props.query.endpointSelect}
+                                            value={this.props.query.endpoint.name}
                                             onChange={this.onEndpointSelectChange()}
                                             required>
                                     {this.getEndpoints()}

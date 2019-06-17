@@ -59,19 +59,23 @@ class QueryBuilder extends React.Component {
                                         allSql={this.props.allSql}
                                         allDescriptions={this.props.allDescriptions}
                                         sql={this.props.sql}
-                                        description={this.props.description}/>;
+                                        description={this.props.description}
+                                        aggregationEnabled={this.props.aggregationEnabled}
+            />;
         } else if (this.state.query.type === 'Condition') {
             childView = <Condition query={this.state.query} parent={null} index={0}
-                                        allSql={this.props.allSql}
-                                        allDescriptions={this.props.allDescriptions}
-                                        sql={this.props.sql}
-                                        description={this.props.description}/>;
+                                   allSql={this.props.allSql}
+                                   allDescriptions={this.props.allDescriptions}
+                                   sql={this.props.sql}
+                                   description={this.props.description}
+            />;
         } else if (this.state.query.type === 'SelectCondition') {
             childView = <SelectCondition query={this.state.query} parent={null} index={0}
-                                        allSql={this.props.allSql}
-                                        allDescriptions={this.props.allDescriptions}
-                                        sql={this.props.sql}
-                                        description={this.props.description}/>;
+                                         allSql={this.props.allSql}
+                                         allDescriptions={this.props.allDescriptions}
+                                         sql={this.props.sql}
+                                         description={this.props.description}
+            />;
         } else {
             console.error('invalid type: type must be ConditionGroup or Condition');
             return null;
