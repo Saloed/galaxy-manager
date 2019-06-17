@@ -6,7 +6,7 @@ export function convertToSchema(original, parent = 'root') {
             name: original.name,
             description: original.description,
             children: Object.keys(original.fields).map(name => {
-                const field = original.fields[name]
+                const field = original.fields[name];
                 return convertToSchema(field, name)
             })
         }
@@ -30,19 +30,26 @@ export function convertToSchema(original, parent = 'root') {
     }
 }
 
+function convertParams(params) {
+    const result = {};
+    params.forEach(it => result[it.position] = it);
+    return result
+}
+
 export function convertDescription(description) {
     const general = {
         name: description.name,
         description: description.description,
         sql: description.sql,
         pagination_enabled: description.pagination_enabled,
-        pagination_key: description.pagination_key
-    }
+        aggregation_enabled: false,
+        key: description.pagination_key
+    };
     const parameters = {
-        sql_params: description.sql_params,
-        params: description.params
-    }
-    const schema = convertToSchema(description.schema)
+        sql_params: convertParams(description.sql_params),
+        params: convertParams(description.params.map((it, idx) => ({...it, position: idx})))
+    };
+    const schema = convertToSchema(description.schema);
     return {
         general, parameters, schema
     }
