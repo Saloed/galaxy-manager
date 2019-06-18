@@ -1,10 +1,14 @@
 import React from 'react'
 import classNames from 'classnames'
-import {Button, Card, Classes, H3, Intent, Overlay, Tab, Tabs} from '@blueprintjs/core'
+import {Button, Card, Classes, H3, Icon, Intent, Overlay, Tab, Tabs, Toast, Toaster, Position} from '@blueprintjs/core'
 import {EndpointGeneral} from "./editorTabs/general";
 import {EndpointSchema} from "./editorTabs/schema";
 import {EndpointParameters} from "./editorTabs/parameters";
 
+const ErrorToaster = Toaster.create({
+    className: "form-error-toaster",
+    position: Position.TOP,
+});
 
 class EndpointEdit extends React.Component {
 
@@ -13,8 +17,10 @@ class EndpointEdit extends React.Component {
         this.state = {
             hasErrors: false,
             error: null,
-            aggregation_enabled: false
+            aggregation_enabled: false,
+            selectedTabId: 'eq'
         };
+        this.form = React.createRef();
         this.schemaBuilder = React.createRef();
         this.parametersBuilder = React.createRef();
         this.generalBuilder = React.createRef()
@@ -25,7 +31,15 @@ class EndpointEdit extends React.Component {
     };
 
     validateState = () => {
-        console.log(this.state);
+        const form = this.form.current
+        if (!form.checkValidity()) {
+            try {
+                form.reportValidity()
+            } finally {
+                ErrorToaster.show({message: "Unable to save. Check for errors", intent: Intent.DANGER})
+            }
+            return false
+        }
         const isValid = true;
         const validationError = 'message';
         if (isValid) {
@@ -57,13 +71,17 @@ class EndpointEdit extends React.Component {
     };
 
     handleTabChange = () => (e) => {
-        this.setState({aggregation_enabled: this.generalBuilder.current.getAggregationSettings()})
+        this.setState({
+            aggregation_enabled: this.generalBuilder.current.getAggregationSettings(),
+            selectedTabId: e
+        })
     }
 
     render() {
-        return <form onSubmit={this.submitForm()}>
+        return <form ref={this.form} onSubmit={this.submitForm()} noValidate>
             <Card interactive={false}>
-                <Tabs id={"EndpointEditTabs"} onChange={this.handleTabChange()}>
+                <Tabs id={"EndpointEditTabs"} selectedTabId={this.state.selectedTabId}
+                      onChange={this.handleTabChange()}>
                     <Tab id={"eq"} title={"General"}
                          panel={<EndpointGeneral ref={this.generalBuilder} {...this.props}/>}/>
                     <Tab id={"es"} title={"Schema"}

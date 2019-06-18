@@ -37,7 +37,7 @@ export class EndpointParameters extends React.Component {
     addParamsClick() {
         this.setState(prevState => {
             const positions = Object.keys(prevState.params).map(it => Number(it));
-            const newPosition = Math.max(...positions) + 1;
+            const newPosition = positions.length === 0 ? 0 : Math.max(...positions) + 1;
             const newStateParams = {...prevState.params};
             newStateParams[newPosition] = {
                 name: '',
@@ -69,7 +69,7 @@ export class EndpointParameters extends React.Component {
     addSQLParamsClick() {
         this.setState(prevState => {
             const positions = Object.keys(prevState.sql_params).map(it => Number(it));
-            const newPosition = Math.max(...positions) + 1;
+            const newPosition = positions.length === 0 ? 0 : Math.max(...positions) + 1;
             const newStateParams = {...prevState.sql_params};
             newStateParams[newPosition] = {
                 name: '',

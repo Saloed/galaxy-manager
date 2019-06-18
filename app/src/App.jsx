@@ -1,8 +1,10 @@
 import React from "react";
-import {convertDescription} from "./converters";
+import {convertDescription, restoreDescription} from "./converters";
 import {ControlGroup, Intent, Menu, MenuItem} from "@blueprintjs/core";
 import EndpointEdit from "./EndpointEdit";
+import yaml from "js-yaml";
 
+const fs = require('fs');
 const path = require('path');
 const lodash = require('lodash');
 
@@ -56,7 +58,7 @@ export class App extends React.Component {
                 sql: sql.name,
                 sql_params: sql_params,
                 pagination_enabled: false,
-                pagination_key: null,
+                key: null,
                 params: [],
                 schema: {
                     type: 'object',
@@ -119,6 +121,20 @@ export class App extends React.Component {
         if (!name) return;
         const description = this.modified_descriptions[name];
         if (!description) return;
-        console.log(description)
+        const normalDescription = restoreDescription(description);
+        const currentDescription = this.descriptions[name];
+        let fileName = currentDescription && currentDescription.file_name;
+        if (!fileName) {
+            const basePath = this.props.repo_base_path;
+            const name = normalDescription.name;
+            const descriptionFileName = name + '.yaml';
+            fileName = path.join(basePath, descriptionFileName)
+        }
+        console.log(normalDescription)
+        const yamlDescription = yaml.safeDump(normalDescription);
+        this.descriptions[name] = {...normalDescription, file_name: fileName};
+        this.modified_descriptions[name] = null;
+        this.base_descriptions[name] = null;
+        fs.writeFileSync(fileName, yamlDescription, 'UTF-8')
     }
 }

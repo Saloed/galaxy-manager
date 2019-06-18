@@ -5,39 +5,39 @@ pagination_enabled: true
 pagination_key: NREC
 sql_params: []
 params:
-  - name: baza
-    type: string
-    operation: exact
-    condition: UStudent.F$WARCH = %s
-    required: false
-    description: ''
-    default: ''
-    example: ''
-  - name: status
-    type: string
-    operation: exact
-    condition: UStudent.F$WARCH = %s
-    required: false
-    description: ''
-    default: ''
-    example: ''
-  - name: id
-    type: string
-    operation: custom
-    condition: UStudent.f$nrec = convert(binary(8),convert(bigInt,0x8000000000000000)+convert(bigint,'%s'))
-    required: false
-    description: ''
-    default: ''
-    example: ''
-  - name: date
-    type: string
-    operation: custom
-    condition: ' UStudent.F$APPDATE>=[dbo].ToAtlDate(CONVERT(date, ''%s'' ,103)) and
+- name: baza
+  type: string
+  operation: exact
+  condition: UStudent.F$WARCH = %s
+  required: false
+  description: ''
+  default: ''
+  example: ''
+- name: status
+  type: string
+  operation: exact
+  condition: UStudent.F$WARCH = %s
+  required: false
+  description: ''
+  default: ''
+  example: ''
+- name: id
+  type: string
+  operation: custom
+  condition: UStudent.f$nrec = convert(binary(8),convert(bigInt,0x8000000000000000)+convert(bigint,'%s'))
+  required: false
+  description: ''
+  default: ''
+  example: ''
+- name: date
+  type: string
+  operation: custom
+  condition: ' UStudent.F$APPDATE>=[dbo].ToAtlDate(CONVERT(date, ''%s'' ,103)) and
     UStudent.F$DisDATE<=[dbo].ToAtlDate(CONVERT(date, ''%s'' , 103)) '
-    required: false
-    description: ''
-    default: ''
-    example: ''
+  required: false
+  description: ''
+  default: ''
+  example: ''
 schema:
   type: object
   name: ''

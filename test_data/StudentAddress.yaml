@@ -1,188 +1,189 @@
 name: StudentAddress
 description: ''
-sql: students_address.sql
 pagination_enabled: false
-pagination_key: null
-sql_params:
-- name: id
-  type: string
-  position: 0
-  description: ''
-  default: ''
-  example: ''
+aggregation_enabled: false
+key: null
+sql: students_address.sql
 params: []
+sql_params:
+  - name: id
+    type: string
+    position: 0
+    description: ''
+    default: ''
+    example: ''
 schema:
   type: object
-  name: ''
+  name: null
   description: ''
   fields:
     AddressType:
       type: object
-      name: ''
+      name: null
       description: ''
       fields:
         ID:
           type: string
           db_name: ID
-          description: ''
           example: ''
+          description: ''
         AddressType:
           type: string
-          db_name: null
-          description: ''
+          db_name: AddressType
           example: ''
+          description: ''
     country:
       type: object
-      name: ''
+      name: null
       description: ''
       fields:
         ID:
           type: string
           db_name: AddrF0_ID
-          description: ''
           example: ''
+          description: ''
         country:
           type: string
           db_name: AddrF0
-          description: ''
           example: ''
+          description: ''
     index:
       type: object
-      name: ''
+      name: null
       description: ''
       fields:
         ID:
           type: string
           db_name: AddrF1_ID
-          description: ''
           example: ''
+          description: ''
         index:
           type: string
           db_name: AddrF1
-          description: ''
           example: ''
+          description: ''
     region:
       type: object
-      name: ''
+      name: null
       description: ''
       fields:
         ID:
           type: string
           db_name: AddrF2_ID
-          description: ''
           example: ''
+          description: ''
         region:
           type: string
           db_name: AddrF2
-          description: ''
           example: ''
+          description: ''
     district:
       type: object
-      name: ''
+      name: null
       description: ''
       fields:
         ID:
           type: string
           db_name: AddrF3_ID
-          description: ''
           example: ''
+          description: ''
         district:
           type: string
           db_name: AddrF3
-          description: ''
           example: ''
+          description: ''
     city:
       type: object
-      name: ''
+      name: null
       description: ''
       fields:
         ID:
           type: string
           db_name: AddrF4_ID
-          description: ''
           example: ''
+          description: ''
         city:
           type: string
           db_name: AddrF4
-          description: ''
           example: ''
+          description: ''
     locality:
       type: object
-      name: ''
+      name: null
       description: ''
       fields:
         ID:
           type: string
           db_name: AddrF5_ID
-          description: ''
           example: ''
+          description: ''
         locality:
           type: string
           db_name: AddrF5
-          description: ''
           example: ''
+          description: ''
     street:
       type: object
-      name: ''
+      name: null
       description: ''
       fields:
         ID:
           type: string
           db_name: AddrF6_id
-          description: ''
           example: ''
+          description: ''
         street:
           type: string
           db_name: AddrF6
-          description: ''
           example: ''
+          description: ''
     homenumber:
       type: object
-      name: ''
+      name: null
       description: ''
       fields:
         ID:
           type: string
           db_name: AddrF7_id
-          description: ''
           example: ''
+          description: ''
         homenumber:
           type: string
           db_name: AddrF7
-          description: ''
           example: ''
+          description: ''
     corpnumber:
       type: object
-      name: ''
+      name: null
       description: ''
       fields:
         ID:
           type: string
           db_name: AddrF8_id
-          description: ''
           example: ''
+          description: ''
         corpnumber:
           type: string
           db_name: AddrF8
-          description: ''
           example: ''
+          description: ''
     flatnumber:
       type: object
-      name: ''
+      name: null
       description: ''
       fields:
         ID:
           type: string
           db_name: AddrF9_id
-          description: ''
           example: ''
+          description: ''
         flatnumber:
           type: string
           db_name: AddrF9
-          description: ''
           example: ''
+          description: ''
     kladrstreet:
       type: string
       db_name: kladrstreet
-      description: ''
       example: ''
+      description: ''
