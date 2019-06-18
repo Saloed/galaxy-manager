@@ -1,5 +1,5 @@
 // Basic init
-const { app, BrowserWindow } = require('electron');
+const {app, BrowserWindow} = require('electron');
 
 // Let electron reloads by itself when webpack watches changes in ./app/
 require('electron-reload')(__dirname);
@@ -8,14 +8,16 @@ require('electron-reload')(__dirname);
 let mainWindow;
 
 app.on('ready', () => {
+    const mainScreen = require('electron').screen.getPrimaryDisplay();
+    const dimensions = mainScreen.size;
     mainWindow = new BrowserWindow({
-        width: 1920,
-        height: 1080,
+        width: dimensions.width,
+        height: dimensions.height,
         webPreferences: {
             nodeIntegration: true
         }
     });
     mainWindow.loadURL(`file://${__dirname}/app/index.html`);
 
-    mainWindow.toggleDevTools()
+    // mainWindow.toggleDevTools()
 });

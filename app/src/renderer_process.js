@@ -19,6 +19,7 @@ let options = {
 
 function walkDir(dir, callback) {
     fs.readdirSync(dir).forEach(f => {
+        if (f.startsWith('.')) return;
         let dirPath = path.join(dir, f);
         let isDirectory = fs.statSync(dirPath).isDirectory();
         isDirectory ?
@@ -27,8 +28,7 @@ function walkDir(dir, callback) {
 }
 
 function askForFiles() {
-    // let filePaths = dialog.showOpenDialog(win, options);
-    let filePaths = ["/storage/sobol/trepo/manager/test_data"];
+    let filePaths = dialog.showOpenDialog(win, options);
     if (!filePaths) return null;
     const files = [];
     filePaths.forEach(it => walkDir(it, file => {

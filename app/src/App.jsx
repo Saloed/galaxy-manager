@@ -130,7 +130,6 @@ export class App extends React.Component {
             const descriptionFileName = name + '.yaml';
             fileName = path.join(basePath, descriptionFileName)
         }
-        console.log(normalDescription)
         const yamlDescription = yaml.safeDump(normalDescription);
         this.descriptions[name] = {...normalDescription, file_name: fileName};
         this.modified_descriptions[name] = null;
