@@ -36,23 +36,23 @@ class SelectCondition extends React.Component {
         if (!endpoint) return null;
         const requiredParams = endpoint.sql_params.concat(endpoint.params.filter(it => it.required)).map(it => it.name);
         const otherParams = endpoint.params.filter(it => !it.required).map(it => it.name);
-        const paramNames = requiredParams.concat(otherParams)
+        const paramNames = requiredParams.concat(otherParams);
         let newParams = {};
-        paramNames.forEach(it => newParams[it] = null)
+        paramNames.forEach(it => newParams[it] = null);
         const newEndpoint = {
             name: endpointName,
             params: newParams
-        }
+        };
         this.props.query.set('endpoint', newEndpoint);
     };
 
 
     onEndpointSelectParamChange = (param) => (e) => {
         const value = e.target.value === '' ? null : e.target.value;
-        const endpoint = this.props.query.endpoint
+        const endpoint = this.props.query.endpoint;
         let params = {...endpoint.params};
         params[param.name] = value;
-        const newEndpoint = {name: endpoint.name, params: params}
+        const newEndpoint = {name: endpoint.name, params: params};
         this.props.query.set('endpoint', newEndpoint);
     };
 

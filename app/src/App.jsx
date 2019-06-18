@@ -4,6 +4,7 @@ import {ControlGroup, Intent, Menu, MenuItem} from "@blueprintjs/core";
 import EndpointEdit from "./EndpointEdit";
 
 const path = require('path');
+const lodash = require('lodash')
 
 function countSQlParams(sql) {
     const pattern = new RegExp("%s", 'g');
@@ -14,19 +15,26 @@ export class App extends React.Component {
 
     constructor(props) {
         super(props);
+        this.base_descriptions = {};
         this.modified_descriptions = {};
+        this.sql_files = props.sql_files;
+        this.descriptions = props.descriptions;
         this.state = {
-            sql_files: props.sql_files,
-            descriptions: props.descriptions,
             selected_sql: null,
             selected_description: null
         };
         this.endpointEditor = React.createRef()
     }
 
+    descriptionHasChanges = (name) => {
+        const base = this.base_descriptions[name];
+        const modified = this.modified_descriptions[name];
+        return !lodash.isEqual(base, modified)
+    };
+
     onSqlFileSelect = (name) => (e) => {
-        const sql = this.state.sql_files[name];
-        if (!this.modified_descriptions[name]) {
+        const sql = this.sql_files[name];
+        if (!this.base_descriptions[name]) {
             const sqlParamsCount = countSQlParams(sql.sql);
             let sql_params = [];
             if (sqlParamsCount > 0) {
@@ -41,7 +49,7 @@ export class App extends React.Component {
                 }))
             }
 
-            const description = this.state.descriptions[name] || {
+            const description = this.descriptions[name] || {
                 name: "",
                 file_name: null,
                 description: "",
@@ -57,8 +65,13 @@ export class App extends React.Component {
                     fields: {}
                 }
             };
-            this.modified_descriptions[name] = convertDescription(description)
+            this.base_descriptions[name] = convertDescription(description)
         }
+
+        if (!this.modified_descriptions[name]) {
+            this.modified_descriptions[name] = Object.assign({}, this.base_descriptions[name])
+        }
+
         const description = this.modified_descriptions[name];
         if (this.endpointEditor.current)
             this.endpointEditor.current.endpointSave();
@@ -72,22 +85,25 @@ export class App extends React.Component {
         return (
             <ControlGroup>
                 <Menu>
-                    {Object.keys(this.state.sql_files).map(name => {
+                    {Object.keys(this.sql_files).map(name => {
                         let intent;
-                        if (this.state.selected_sql === name) {
+                        const mySql = this.state.selected_sql
+                        if (mySql && mySql.name === name) {
                             intent = Intent.PRIMARY;
-                        } else if (!this.state.descriptions[name]) {
+                        } else if (!this.descriptions[name]) {
                             intent = Intent.DANGER
+                        } else if (!this.modified_descriptions[name]) {
+                            intent = Intent.NONE
                         } else {
-                            intent = this.modified_descriptions[name] ? Intent.WARNING : Intent.NONE;
+                            intent = this.descriptionHasChanges(name) ? Intent.WARNING : Intent.NONE;
                         }
                         return <MenuItem text={name} intent={intent} key={name}
                                          onClick={this.onSqlFileSelect(name)}/>
                     })}
                 </Menu>
                 {this.state.selected_sql && <EndpointEdit ref={this.endpointEditor}
-                                                          allSql={this.state.sql_files}
-                                                          allDescriptions={this.state.descriptions}
+                                                          allSql={this.sql_files}
+                                                          allDescriptions={this.descriptions}
                                                           sql={this.state.selected_sql}
                                                           description={this.state.selected_description}/>}
             </ControlGroup>
