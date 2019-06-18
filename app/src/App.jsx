@@ -4,7 +4,7 @@ import {ControlGroup, Intent, Menu, MenuItem} from "@blueprintjs/core";
 import EndpointEdit from "./EndpointEdit";
 
 const path = require('path');
-const lodash = require('lodash')
+const lodash = require('lodash');
 
 function countSQlParams(sql) {
     const pattern = new RegExp("%s", 'g');
@@ -87,7 +87,7 @@ export class App extends React.Component {
                 <Menu>
                     {Object.keys(this.sql_files).map(name => {
                         let intent;
-                        const mySql = this.state.selected_sql
+                        const mySql = this.state.selected_sql;
                         if (mySql && mySql.name === name) {
                             intent = Intent.PRIMARY;
                         } else if (!this.descriptions[name]) {
@@ -105,8 +105,20 @@ export class App extends React.Component {
                                                           allSql={this.sql_files}
                                                           allDescriptions={this.descriptions}
                                                           sql={this.state.selected_sql}
-                                                          description={this.state.selected_description}/>}
+                                                          description={this.state.selected_description}
+                                                          onSelectedDescriptionSave={this.onSelectedDescriptionSave()}
+                />}
             </ControlGroup>
         );
+    }
+
+    onSelectedDescriptionSave = () => () => {
+        if (!this.endpointEditor.current) return;
+        this.endpointEditor.current.endpointSave();
+        const name = this.state.selected_sql && this.state.selected_sql.name;
+        if (!name) return;
+        const description = this.modified_descriptions[name];
+        if (!description) return;
+        console.log(description)
     }
 }

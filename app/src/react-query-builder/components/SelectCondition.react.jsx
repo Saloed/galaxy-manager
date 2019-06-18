@@ -31,6 +31,7 @@ class SelectCondition extends React.Component {
 
     onEndpointSelectChange = () => (e) => {
         const endpointName = e.target.value;
+        if (endpointName === '') return;
         const endpoints = Object.values(this.props.allDescriptions);
         const endpoint = endpoints.find(it => it.name === endpointName);
         if (!endpoint) return null;
@@ -169,9 +170,10 @@ class SelectCondition extends React.Component {
                                        style={{marginRight: 5}}>
                                 <HTMLSelect id={"endpoint"}
                                             className="endpoints"
-                                            value={this.props.query.endpoint.name}
+                                            value={this.props.query.endpoint.name || ''}
                                             onChange={this.onEndpointSelectChange()}
                                             required>
+                                    <option value=""/>
                                     {this.getEndpoints()}
                                 </HTMLSelect>
                             </FormGroup>

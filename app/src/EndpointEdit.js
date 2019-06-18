@@ -39,10 +39,8 @@ class EndpointEdit extends React.Component {
 
     submitForm = () => (e) => {
         e.preventDefault();
-        if (!this.validateState()) {
-
-        }
-
+        if (!this.validateState()) return
+        this.props.onSelectedDescriptionSave()
     };
 
     endpointChange = () => {

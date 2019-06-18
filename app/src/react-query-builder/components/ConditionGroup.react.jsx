@@ -43,7 +43,7 @@ class ConditionGroup extends React.Component {
             type: 'SelectCondition',
             fieldName: '',
             endpoint: {
-                name: '',
+                name: null,
                 params: {}
             },
             description: ''
