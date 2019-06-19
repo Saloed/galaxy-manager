@@ -195,7 +195,7 @@ class ConditionGroup extends React.Component {
                                     onChange={this.handleAggregationManyChange()}
                             />
                         </FormGroup>}
-                        {this.props.aggregationEnabled && <FormGroup
+                        {this.props.query.many && <FormGroup
                             label={"Aggregation field"}
                             labelInfo={"(optional)"}
                             labelFor={"aggregation"}
