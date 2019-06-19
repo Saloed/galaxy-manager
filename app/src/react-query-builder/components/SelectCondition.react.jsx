@@ -63,7 +63,7 @@ class SelectCondition extends React.Component {
 
     removeSelf(e) {
         if (this.props.parent) {
-            this.props.parent.children.splice(this.props.index, 1);
+            this.props.parent.query.children.splice(this.props.index, 1);
         }
     }
 

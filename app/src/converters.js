@@ -5,7 +5,8 @@ function convertToSchema(original, parent = 'root') {
             objectKey: parent,
             name: original.name || null,
             many: original.many || false,
-            aggregation_field: (original.many && original.aggregation_field) || null,
+            aggregate: original.aggregate || false,
+            aggregation_field: (original.aggregate && original.aggregation_field) || null,
             description: original.description || '',
             children: Object.keys(original.fields || {}).map(name => {
                 const field = original.fields[name];
@@ -93,8 +94,12 @@ function restoreSchema(schema) {
         };
         if (schema.many) {
             result.many = schema.many;
+        }
+        if (schema.aggregate) {
+            result.aggregate = schema.aggregate;
             result.aggregation_field = schema.aggregation_field
         }
+
         return result
     } else if (schema.type === 'SelectCondition') {
         const params = Object.entries(schema.endpoint.params).filter(([key, value]) => key && value);

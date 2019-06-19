@@ -61,7 +61,10 @@ class EndpointEdit extends React.Component {
         this.generalBuilder.current.generalChange();
         this.schemaBuilder.current.schemaChange();
         this.parametersBuilder.current.parametersChange()
-        this.setState({aggregation_enabled: this.generalBuilder.current.getAggregationSettings()})
+        this.setState({
+            selectedTabId: 'eq',
+            aggregation_enabled: this.generalBuilder.current.getAggregationSettings()
+        })
     };
 
     endpointSave = () => {

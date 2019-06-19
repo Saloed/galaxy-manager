@@ -36,7 +36,7 @@ class ConditionGroup extends React.Component {
             example: '',
             description: ''
         });
-    }
+    };
 
     addSelectCondition = () => (e) => {
         this.props.query.children.push({
@@ -48,7 +48,7 @@ class ConditionGroup extends React.Component {
             },
             description: ''
         });
-    }
+    };
 
     addGroup = () => (e) => {
         this.props.query.children.push({
@@ -57,34 +57,39 @@ class ConditionGroup extends React.Component {
             name: '',
             description: '',
             many: false,
+            aggregate: false,
             aggregation_field: null,
             children: []
         });
-    }
+    };
 
 
     removeSelf(e) {
         if (this.props.parent) {
-            this.props.parent.children.splice(this.props.index, 1);
+            this.props.parent.query.children.splice(this.props.index, 1);
         }
     }
 
 
     addKey = () => (e) => {
         this.props.query.set('objectKey', e.target.value)
-    }
+    };
 
     addObjectName = () => (e) => {
         this.props.query.set('name', e.target.value)
-    }
+    };
 
     onFieldDescriptionChange = () => (e) => {
         this.props.query.set('description', e.target.value)
-    }
+    };
 
     handleAggregationManyChange = () => (e) => {
         this.props.query.set('many', e.target.checked)
-    }
+    };
+
+    handleAggregationAggregateChange = () => (e) => {
+        this.props.query.set('aggregate', e.target.checked)
+    };
 
     onAggregationKeyChange = () => (e) => {
         const value = e.target.value === '' ? null : e.target.value;
@@ -94,24 +99,34 @@ class ConditionGroup extends React.Component {
 
     onDeleteAlert = () => (e) => {
         this.setState({showDeleteAlert: true})
-    }
+    };
 
 
     handleDeleteCancel = () => (e) => {
         this.setState({showDeleteAlert: false})
-    }
+    };
 
 
     handleDeleteOk = () => (e) => {
-        this.setState({showDeleteAlert: false})
+        this.setState({showDeleteAlert: false});
         this.removeSelf(e)
-    }
+    };
 
+    checkManyAvailable = () => {
+        if (!this.props.aggregationEnabled) return false;
+        let parent = this.props.parent;
+        while (parent) {
+            if(parent.query.aggregate) return true;
+            if(parent.query.many) return false;
+            parent = parent.parent
+        }
+        return true;
+    };
 
     render() {
         const childrenViews = this.props.query.children.map(function (childQuery, index) {
             if (childQuery.type === 'ConditionGroup') {
-                return <ConditionGroup query={childQuery} parent={this.props.query} index={index} key={index}
+                return <ConditionGroup query={childQuery} parent={this.props} index={index} key={index}
                                        allSql={this.props.allSql}
                                        allDescriptions={this.props.allDescriptions}
                                        sql={this.props.sql}
@@ -119,14 +134,14 @@ class ConditionGroup extends React.Component {
                                        aggregationEnabled={this.props.aggregationEnabled}
                 />;
             } else if (childQuery.type === 'Condition') {
-                return <Condition query={childQuery} parent={this.props.query} index={index} key={index}
+                return <Condition query={childQuery} parent={this.props} index={index} key={index}
                                   allSql={this.props.allSql}
                                   allDescriptions={this.props.allDescriptions}
                                   sql={this.props.sql}
                                   description={this.props.description}
                 />;
             } else if (childQuery.type === 'SelectCondition') {
-                return <SelectCondition query={childQuery} parent={this.props.query} index={index} key={index}
+                return <SelectCondition query={childQuery} parent={this.props} index={index} key={index}
                                         allSql={this.props.allSql}
                                         allDescriptions={this.props.allDescriptions}
                                         sql={this.props.sql}
@@ -168,11 +183,10 @@ class ConditionGroup extends React.Component {
                                         required={this.props.query.many}
                             />
                         </FormGroup>
-                        {this.props.aggregationEnabled && <FormGroup
+                        {this.checkManyAvailable() && <FormGroup
                             label={"Many objects field"}
                             labelInfo={"(optional)"}
                             labelFor={"many"}
-                            helperText="Enables aggregation of this object with selected key"
                             style={{marginRight: 5}}
                         >
                             <Switch id={'many'}
@@ -181,7 +195,20 @@ class ConditionGroup extends React.Component {
                                     onChange={this.handleAggregationManyChange()}
                             />
                         </FormGroup>}
-                        {this.props.query.many && <FormGroup
+                        {this.props.aggregationEnabled && <FormGroup
+                            label={"Aggregation field"}
+                            labelInfo={"(optional)"}
+                            labelFor={"aggregation"}
+                            helperText="Enables aggregation of this object with selected key"
+                            style={{marginRight: 5}}
+                        >
+                            <Switch id={'aggregation'}
+                                    checked={this.props.query.aggregate}
+                                    label="Aggregation"
+                                    onChange={this.handleAggregationAggregateChange()}
+                            />
+                        </FormGroup>}
+                        {this.props.query.aggregate && <FormGroup
                             label={"Aggregation key"}
                             labelFor="param-selector"
                             labelInfo="(required)"
@@ -267,12 +294,14 @@ class ConditionGroup extends React.Component {
             return element
         }
     }
-};
+
+
+}
 
 ConditionGroup.propTypes = {
     query: PropTypes.object.isRequired,
     parent: PropTypes.object,
     index: PropTypes.number.isRequired
-}
+};
 
 export default ConditionGroup
