@@ -88,6 +88,7 @@ export class EndpointGeneral extends React.Component {
                         onChange={this.handlePaginationEnabledChange()}
                 />
                 <Switch checked={this.state.aggregation_enabled}
+                        disabled={!this.state.key}
                         label="Aggregation"
                         onChange={this.handleAggregationEnabledChange()}
                 />
