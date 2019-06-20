@@ -92,12 +92,12 @@ export class App extends React.Component {
                         const mySql = this.state.selected_sql;
                         if (mySql && mySql.name === name) {
                             intent = Intent.PRIMARY;
+                        } else if (this.descriptionHasChanges(name)) {
+                            intent = Intent.WARNING
                         } else if (!this.descriptions[name]) {
                             intent = Intent.DANGER
-                        } else if (!this.modified_descriptions[name]) {
-                            intent = Intent.NONE
                         } else {
-                            intent = this.descriptionHasChanges(name) ? Intent.WARNING : Intent.NONE;
+                            intent = Intent.NONE;
                         }
                         return <MenuItem text={name} intent={intent} key={name}
                                          onClick={this.onSqlFileSelect(name)}/>

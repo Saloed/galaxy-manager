@@ -67,6 +67,16 @@ class Condition extends React.Component {
         this.removeSelf(e)
     };
 
+    getRootNodeQuery = () => {
+        let parent = this.props.parent;
+        let query = this.props.query;
+        while (parent) {
+            query = parent.query;
+            parent = parent.parent
+        }
+        return query;
+    };
+
     render() {
         return (
             <div className="query condition">
@@ -110,7 +120,7 @@ class Condition extends React.Component {
                                             className="operators" value={this.props.query.db_name || ''}
                                             onChange={this.onFieldDbFieldChange()} required>
                                     <option value=""/>
-                                    {fieldOptionsForSql(this.props.sql)}
+                                    { fieldOptionsForSql(this.props.sql, this.getRootNodeQuery()) }
                                 </HTMLSelect>
 
                             </FormGroup>
