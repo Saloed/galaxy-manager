@@ -1,6 +1,6 @@
 {
   "name": "description-manager",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Editor for galaxy API descriptions",
   "main": "main.js",
   "scripts": {
@@ -9,7 +9,7 @@
     "build:production": "cross-env NODE_ENV=production webpack --mode production",
     "serve": "electron .",
     "pack": "electron-builder --dir",
-    "dist": "electron-builder -l"
+    "dist": "electron-builder -lw"
   },
   "author": "Valentine Sobol <napster_1997@mail.ru>",
   "repository": "Saloed/galaxy-manager",
