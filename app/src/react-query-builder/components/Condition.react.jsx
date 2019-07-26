@@ -41,6 +41,7 @@ class Condition extends React.Component {
 
 
     onFieldDescriptionChange = () => (e) => {
+        console.log(e.target.value)
         this.props.query.set('description', e.target.value);
     };
 
