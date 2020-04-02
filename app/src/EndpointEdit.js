@@ -20,7 +20,9 @@ class EndpointEdit extends React.Component {
             aggregation_enabled: false,
             selectedTabId: 'eq'
         };
-        this.form = React.createRef();
+        this.generalForm = React.createRef();
+        this.schemaForm = React.createRef();
+        this.parametersForm = React.createRef();
         this.schemaBuilder = React.createRef();
         this.parametersBuilder = React.createRef();
         this.generalBuilder = React.createRef()
@@ -31,29 +33,35 @@ class EndpointEdit extends React.Component {
     };
 
     validateState = () => {
-        const form = this.form.current
-        if (!form.checkValidity()) {
-            try {
-                form.reportValidity()
-            } finally {
-                ErrorToaster.show({message: "Unable to save. Check for errors", intent: Intent.DANGER})
-            }
-            return false
-        }
-        const isValid = true;
-        const validationError = 'message';
-        if (isValid) {
+        const generalForm = this.generalForm.current;
+        const schemaForm = this.schemaForm.current;
+        const parametersForm = this.parametersForm.current;
+        const generalValidity = generalForm.checkValidity();
+        const schemaValidity = schemaForm.checkValidity();
+        const parametersValidity = parametersForm.checkValidity();
+        if (generalValidity && schemaValidity && parametersValidity) {
             this.setState({error: null, hasErrors: false});
             return true
-        } else {
-            this.setState({error: validationError, hasErrors: true});
-            return false
         }
+        let errorForm = null;
+        let errorTab = null;
+        if (!generalValidity) {
+            errorForm = generalForm;
+            errorTab = 'eq';
+        } else if (!schemaValidity) {
+            errorForm = schemaForm;
+            errorTab = 'es';
+        } else { // parametersValidity
+            errorForm = parametersForm;
+            errorTab = 'ep';
+        }
+        this.setState({selectedTabId: errorTab}, () => errorForm.reportValidity());
+        ErrorToaster.show({message: "Unable to save. Check for errors", intent: Intent.DANGER});
+        return false
     };
 
     submitForm = () => (e) => {
-        e.preventDefault();
-        if (!this.validateState()) return
+        if (!this.validateState()) return;
         this.props.onSelectedDescriptionSave()
     };
 
@@ -81,19 +89,32 @@ class EndpointEdit extends React.Component {
     }
 
     render() {
-        return <form ref={this.form} onSubmit={this.submitForm()} noValidate>
+        return <div>
             <Card interactive={false}>
                 <Tabs id={"EndpointEditTabs"} selectedTabId={this.state.selectedTabId}
-                      onChange={this.handleTabChange()}>
+                      onChange={this.handleTabChange()} renderActiveTabPanelOnly={false}>
                     <Tab id={"eq"} title={"General"}
-                         panel={<EndpointGeneral ref={this.generalBuilder} {...this.props}/>}/>
+                         panel={
+                             <form onSubmit={(e) => e.preventDefault()} ref={this.generalForm}>
+                                 <EndpointGeneral ref={this.generalBuilder} {...this.props}/>
+                             </form>
+                         }/>
                     <Tab id={"es"} title={"Schema"}
-                         panel={<EndpointSchema ref={this.schemaBuilder} {...this.props}
-                                                aggregationEnabled={this.state.aggregation_enabled}
-                         />}/>
+                         panel={
+                             <form onSubmit={(e) => e.preventDefault()} ref={this.schemaForm}>
+                                 <EndpointSchema ref={this.schemaBuilder} {...this.props}
+                                                 aggregationEnabled={this.state.aggregation_enabled}
+                                 />
+                             </form>
+                         }/>
                     <Tab id={"ep"} title={"Parameters"}
-                         panel={<EndpointParameters ref={this.parametersBuilder} {...this.props}/>}/>
-                    <Button type="submit" className="formButton submit" icon={"floppy-disk"} text={"Save"}/>
+                         panel={
+                             <form onSubmit={(e) => e.preventDefault()} ref={this.parametersForm}>
+                                 <EndpointParameters ref={this.parametersBuilder} {...this.props}/>
+                             </form>
+                         }/>
+                    <Button onClick={this.submitForm()} className="formButton submit" icon={"floppy-disk"}
+                            text={"Save"}/>
                 </Tabs>
             </Card>
             <Overlay onClose={this.handleErrorOverlayClose()}
@@ -113,7 +134,7 @@ class EndpointEdit extends React.Component {
                     </div>
                 </div>
             </Overlay>
-        </form>
+        </div>
 
 
     }
