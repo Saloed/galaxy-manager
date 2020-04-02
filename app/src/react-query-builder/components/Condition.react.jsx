@@ -8,7 +8,7 @@ import {
     TextArea,
     Alert,
     Intent,
-    Card, ButtonGroup
+    Card, ButtonGroup, Checkbox
 } from "@blueprintjs/core";
 import PropTypes from "prop-types";
 
@@ -39,6 +39,9 @@ class Condition extends React.Component {
         this.props.query.set('fieldName', e.target.value);
     };
 
+    onFieldXmlAttributeChange = () => (e) => {
+        this.props.query.set('xml_attribute', e.target.checked);
+    };
 
     onFieldDescriptionChange = () => (e) => {
         this.props.query.set('description', e.target.value);
@@ -123,6 +126,13 @@ class Condition extends React.Component {
                                     { fieldOptionsForSql(this.props.sql, this.getRootNodeQuery()) }
                                 </HTMLSelect>
 
+                            </FormGroup>
+                            <FormGroup
+                                label={"XML attribute"}
+                                labelFor={"xml-attribute"}
+                                style={{marginRight: 5}}
+                            >
+                                <Checkbox id={"xml-attribute"} checked={this.props.query.xml_attribute} onChange={this.onFieldXmlAttributeChange()}/>
                             </FormGroup>
                             <Button className="conditionButton removeCondition"
                                     icon={"trash"}

@@ -29,6 +29,7 @@ function convertToSchema(original, parent = 'root') {
             fieldType: original.type || 'string',
             fieldName: parent,
             db_name: original.db_name || null,
+            xml_attribute: original.xml_attribute || false,
             example: original.example || '',
             description: original.description || ''
         }
@@ -114,6 +115,7 @@ function restoreSchema(schema) {
         return {
             type: schema.fieldType,
             db_name: schema.db_name,
+            xml_attribute: schema.xml_attribute,
             example: schema.example,
             description: schema.description
         }
