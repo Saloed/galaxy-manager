@@ -159,7 +159,7 @@ class SelectCondition extends React.Component {
                             >
                                 <InputGroup id={"field-name"}
                                             className="operand name"
-                                            defaultValue={this.props.query.fieldName}
+                                            value={this.props.query.fieldName}
                                             onChange={this.onFieldNameChange()}
                                             placeholder={"name"}
                                             required/>

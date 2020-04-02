@@ -1,6 +1,6 @@
 import React from "react";
 import {convertDescription, restoreDescription} from "./converters";
-import {ControlGroup, Intent, Menu, MenuItem} from "@blueprintjs/core";
+import {ControlGroup, Intent, Menu, MenuItem, Position, Toaster} from "@blueprintjs/core";
 import EndpointEdit from "./EndpointEdit";
 import yaml from "js-yaml";
 
@@ -12,6 +12,11 @@ function countSQlParams(sql) {
     const pattern = new RegExp("%s", 'g');
     return (sql.match(pattern) || []).length
 }
+
+const FileSaveToaster = Toaster.create({
+    className: "form-error-toaster",
+    position: Position.TOP,
+});
 
 export class App extends React.Component {
 
@@ -134,6 +139,7 @@ export class App extends React.Component {
         this.descriptions[name] = {...normalDescription, file_name: fileName};
         this.modified_descriptions[name] = null;
         this.base_descriptions[name] = null;
-        fs.writeFileSync(fileName, yamlDescription, 'UTF-8')
+        fs.writeFileSync(fileName, yamlDescription, 'UTF-8');
+        FileSaveToaster.show({message: "Saved to: " + fileName, intent: Intent.SUCCESS})
     }
 }

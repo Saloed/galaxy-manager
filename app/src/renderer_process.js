@@ -28,7 +28,7 @@ function walkDir(dir, callback) {
 }
 
 function askForFiles() {
-    let filePaths = dialog.showOpenDialog(win, options);
+    let filePaths = dialog.showOpenDialogSync(win, options);
     if (!filePaths) return null;
     const files = [];
     filePaths.forEach(it => walkDir(it, file => {

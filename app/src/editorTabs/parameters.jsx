@@ -115,7 +115,7 @@ export class EndpointParameters extends React.Component {
                                                 <InputGroup
                                                     id={"param-name"}
                                                     className="operand name"
-                                                    defaultValue={it.name}
+                                                    value={it.name}
                                                     placeholder={"parameter name"}
                                                     onChange={this.handleParamsChange.bind(this, key, 'name')}
                                                     required/>
@@ -154,7 +154,7 @@ export class EndpointParameters extends React.Component {
                                             <TextArea
                                                 id={"param-cond"}
                                                 className="param-cond"
-                                                defaultValue={it.condition}
+                                                value={it.condition}
                                                 placeholder={"parameter condition"}
                                                 onChange={this.handleParamsChange.bind(this, key, 'condition')}
                                                 fill={true}
@@ -170,7 +170,7 @@ export class EndpointParameters extends React.Component {
                                                 <InputGroup
                                                     id={"param-example"}
                                                     className="param-example"
-                                                    defaultValue={it.example}
+                                                    value={it.example}
                                                     placeholder={"parameter example"}
                                                     onChange={this.handleParamsChange.bind(this, key, 'example')}
                                                 />
@@ -182,7 +182,7 @@ export class EndpointParameters extends React.Component {
                                                 <InputGroup
                                                     id={"param-default"}
                                                     className="param-default"
-                                                    defaultValue={it.default}
+                                                    value={it.default}
                                                     placeholder={"default value"}
                                                     onChange={this.handleParamsChange.bind(this, key, 'default')}
                                                 />
@@ -196,7 +196,7 @@ export class EndpointParameters extends React.Component {
                                             <TextArea
                                                 id={"param-description"}
                                                 className="param-description"
-                                                defaultValue={it.description}
+                                                value={it.description}
                                                 placeholder={"parameter description"}
                                                 onChange={this.handleParamsChange.bind(this, key, 'description')}
                                                 fill={true}
@@ -245,7 +245,7 @@ export class EndpointParameters extends React.Component {
                                                 <InputGroup
                                                     id={"param-name"}
                                                     className="operand name"
-                                                    defaultValue={it.name}
+                                                    value={it.name}
                                                     placeholder={"parameter name"}
                                                     onChange={this.handleSQLParamsChange.bind(this, key, 'name')}
                                                     required/>
@@ -273,7 +273,7 @@ export class EndpointParameters extends React.Component {
                                                 <InputGroup
                                                     id={"param-example"}
                                                     className="param-example"
-                                                    defaultValue={it.example}
+                                                    value={it.example}
                                                     placeholder={"parameter example"}
                                                     onChange={this.handleSQLParamsChange.bind(this, key, 'example')}
                                                 />
@@ -285,7 +285,7 @@ export class EndpointParameters extends React.Component {
                                                 <InputGroup
                                                     id={"param-default"}
                                                     className="param-default"
-                                                    defaultValue={it.default}
+                                                    value={it.default}
                                                     placeholder={"default value"}
                                                     onChange={this.handleSQLParamsChange.bind(this, key, 'default')}
                                                 />
@@ -300,7 +300,7 @@ export class EndpointParameters extends React.Component {
                                             <TextArea
                                                 id={"param-description"}
                                                 className="param-description"
-                                                defaultValue={it.description}
+                                                value={it.description}
                                                 placeholder={"parameter description"}
                                                 onChange={this.handleSQLParamsChange.bind(this, key, 'description')}
                                                 fill={true}

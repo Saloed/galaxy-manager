@@ -41,7 +41,6 @@ class Condition extends React.Component {
 
 
     onFieldDescriptionChange = () => (e) => {
-        console.log(e.target.value)
         this.props.query.set('description', e.target.value);
     };
 
@@ -93,7 +92,7 @@ class Condition extends React.Component {
                             >
                                 <InputGroup
                                     id={"name"}
-                                    className="operand name" defaultValue={this.props.query.fieldName}
+                                    className="operand name" value={this.props.query.fieldName}
                                     onChange={this.onFieldNameChange()} placeholder={"name"} required/>
 
                             </FormGroup>

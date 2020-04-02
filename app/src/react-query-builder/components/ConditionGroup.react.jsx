@@ -165,7 +165,7 @@ class ConditionGroup extends React.Component {
                             <InputGroup id={"obj-key"}
                                         className="object key"
                                         placeholder={"Key name for object"}
-                                        defaultValue={this.props.query.objectKey}
+                                        value={this.props.query.objectKey}
                                         onChange={this.addKey()}
                                         required/>
                         </FormGroup>
@@ -178,7 +178,7 @@ class ConditionGroup extends React.Component {
                             <InputGroup id={"obj-name"}
                                         className="object name"
                                         placeholder={"Name of object"}
-                                        defaultValue={this.props.query.name}
+                                        value={this.props.query.name}
                                         onChange={this.addObjectName()}
                                         required={this.props.query.many}
                             />

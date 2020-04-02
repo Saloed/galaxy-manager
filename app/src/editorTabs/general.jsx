@@ -15,7 +15,7 @@ export class EndpointGeneral extends React.Component {
 
     getAggregationSettings = () => {
         return this.state.aggregation_enabled
-    }
+    };
 
     addName = () => (e) => {
         this.setState({name: e.target.value})
@@ -67,7 +67,7 @@ export class EndpointGeneral extends React.Component {
                     <InputGroup id="text-input"
                                 className="endpoint name"
                                 placeholder={"Endpoint name"}
-                                defaultValue={this.state.name}
+                                value={this.state.name}
                                 onChange={this.addName()}
                                 required/>
                 </FormGroup>
@@ -99,7 +99,7 @@ export class EndpointGeneral extends React.Component {
                     <TextArea id="text-input"
                               className="endpoint name"
                               placeholder={"Endpoint description"}
-                              defaultValue={this.state.desciption}
+                              value={this.state.desciption}
                               onChange={this.changeDescription()}
                     />
                 </FormGroup>
