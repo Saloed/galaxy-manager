@@ -33,6 +33,7 @@ class ConditionGroup extends React.Component {
             fieldType: 'string',
             fieldName: '',
             db_name: null,
+            xml_attribute: false,
             example: '',
             description: ''
         });

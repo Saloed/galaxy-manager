@@ -3,7 +3,7 @@ function convertToSchema(original, parent = 'root') {
         return {
             type: 'ConditionGroup',
             objectKey: parent,
-            name: original.name || null,
+            name: original.name || '',
             many: original.many || false,
             aggregate: original.aggregate || false,
             aggregation_field: (original.aggregate && original.aggregation_field) || null,

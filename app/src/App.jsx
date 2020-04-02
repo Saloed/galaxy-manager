@@ -122,10 +122,9 @@ export class App extends React.Component {
     onSelectedDescriptionSave = () => () => {
         if (!this.endpointEditor.current) return;
         this.endpointEditor.current.endpointSave();
+        const description = this.state.selected_description;
         const name = this.state.selected_sql && this.state.selected_sql.name;
-        if (!name) return;
-        const description = this.modified_descriptions[name];
-        if (!description) return;
+        if (!name || !description) return;
         const normalDescription = restoreDescription(description);
         const currentDescription = this.descriptions[name];
         let fileName = currentDescription && currentDescription.file_name;
@@ -137,8 +136,8 @@ export class App extends React.Component {
         }
         const yamlDescription = yaml.safeDump(normalDescription);
         this.descriptions[name] = {...normalDescription, file_name: fileName};
-        this.modified_descriptions[name] = null;
-        this.base_descriptions[name] = null;
+        this.base_descriptions[name] = Object.assign({}, description);
+        this.modified_descriptions[name] = Object.assign({}, description);
         fs.writeFileSync(fileName, yamlDescription, 'UTF-8');
         FileSaveToaster.show({message: "Saved to: " + fileName, intent: Intent.SUCCESS})
     }

@@ -11,66 +11,54 @@ import PropTypes from "prop-types";
 class QueryBuilder extends React.Component {
     constructor(props) {
         super(props);
-        const queryFreezerStore = new Freezer(this.props.initialQuery);
-        const query = queryFreezerStore.get();
+        const queryFreezerStore = new Freezer(this.props.initialQuery, {mutable: false, live: true});
         this.state = {
-            queryFreezerStore: queryFreezerStore,
-            query: query
-        }
+            queryFreezerStore: queryFreezerStore
+        };
 
         this.getQuery = this.getQuery.bind(this)
     }
 
     componentDidMount() {
-        this.onQueryChange(this.state.query)
+        this.onQueryChange(this.state.queryFreezerStore)
     }
 
     getQuery() {
-        return this.state.query;
+        return this.state.queryFreezerStore.get().toJS()
     }
 
     onQueryChange = (query) => {
-        const queryListener = query.getListener();
-        queryListener.on('update', function (updated) {
-            this.setState({
-                query: updated
-            });
-
-            this.props.onQueryUpdate(this);
+        query.on('update', function () {
+            this.forceUpdate()
         }.bind(this));
-
-        this.props.onQueryUpdate(this);
-    }
+    };
 
     updateQuery = (newQuery) => {
         const queryFreezerStore = new Freezer(newQuery);
-        const query = queryFreezerStore.get();
-        this.setState({
-            queryFreezerStore: queryFreezerStore,
-            query: query
-        })
-        this.onQueryChange(query)
-    }
+        this.setState({queryFreezerStore: queryFreezerStore});
+        this.onQueryChange(queryFreezerStore)
+    };
 
     render() {
         let childView = null;
-        if (this.state.query.type === 'ConditionGroup') {
-            childView = <ConditionGroup query={this.state.query} isRoot={true} parent={null} index={0}
+        const query = this.state.queryFreezerStore.get();
+        if (query.type === 'ConditionGroup') {
+            childView = <ConditionGroup query={query} isRoot={true} parent={null} index={0}
                                         allSql={this.props.allSql}
                                         allDescriptions={this.props.allDescriptions}
                                         sql={this.props.sql}
                                         description={this.props.description}
                                         aggregationEnabled={this.props.aggregationEnabled}
             />;
-        } else if (this.state.query.type === 'Condition') {
-            childView = <Condition query={this.state.query} parent={null} index={0}
+        } else if (query.type === 'Condition') {
+            childView = <Condition query={query} parent={null} index={0}
                                    allSql={this.props.allSql}
                                    allDescriptions={this.props.allDescriptions}
                                    sql={this.props.sql}
                                    description={this.props.description}
             />;
-        } else if (this.state.query.type === 'SelectCondition') {
-            childView = <SelectCondition query={this.state.query} parent={null} index={0}
+        } else if (query.type === 'SelectCondition') {
+            childView = <SelectCondition query={query} parent={null} index={0}
                                          allSql={this.props.allSql}
                                          allDescriptions={this.props.allDescriptions}
                                          sql={this.props.sql}
@@ -87,18 +75,16 @@ class QueryBuilder extends React.Component {
             </div>
         );
     }
-};
+}
+
 QueryBuilder.propTypes = {
-    initialQuery: PropTypes.object.isRequired,
-    onQueryUpdate: PropTypes.func
+    initialQuery: PropTypes.object.isRequired
 };
 QueryBuilder.defaultProps = {
     initialQuery: {
         type: 'ConditionGroup',
         objectKey: 'root',
         children: []
-    },
-    onQueryUpdate: function (queryBuilder) {
     }
 };
 
