@@ -117,8 +117,8 @@ class ConditionGroup extends React.Component {
         if (!this.props.aggregationEnabled) return false;
         let parent = this.props.parent;
         while (parent) {
-            if(parent.query.aggregate) return true;
-            if(parent.query.many) return false;
+            if (parent.query.aggregate) return true;
+            if (parent.query.many) return false;
             parent = parent.parent
         }
         return true;
@@ -155,9 +155,9 @@ class ConditionGroup extends React.Component {
         }.bind(this));
         const element = (
             <div className="query conditionGroup">
-                {!this.props.isRoot && <ControlGroup fill={false} vertical={true}>
+                <ControlGroup fill={false} vertical={!this.props.isRoot}>
                     <ControlGroup vertical={false}>
-                        <FormGroup
+                        {!this.props.isRoot && <FormGroup
                             label={"Object key field"}
                             labelInfo={"(required)"}
                             labelFor={"obj-key"}
@@ -169,10 +169,10 @@ class ConditionGroup extends React.Component {
                                         value={this.props.query.objectKey}
                                         onChange={this.addKey()}
                                         required/>
-                        </FormGroup>
+                        </FormGroup>}
                         <FormGroup
                             label={"Object name"}
-                            labelInfo={this.props.query.many ? "(required)" : "(optional)"}
+                            labelInfo={this.props.isRoot || this.props.query.many ? "(required)" : "(optional)"}
                             labelFor={"obj-name"}
                             style={{marginRight: 5}}
                         >
@@ -181,10 +181,10 @@ class ConditionGroup extends React.Component {
                                         placeholder={"Name of object"}
                                         value={this.props.query.name}
                                         onChange={this.addObjectName()}
-                                        required={this.props.query.many}
+                                        required={this.props.isRoot || this.props.query.many}
                             />
                         </FormGroup>
-                        {this.checkManyAvailable() && <FormGroup
+                        {!this.props.isRoot && this.checkManyAvailable() && <FormGroup
                             label={"Many objects field"}
                             labelInfo={"(optional)"}
                             labelFor={"many"}
@@ -196,7 +196,7 @@ class ConditionGroup extends React.Component {
                                     onChange={this.handleAggregationManyChange()}
                             />
                         </FormGroup>}
-                        {this.props.query.many && <FormGroup
+                        {!this.props.isRoot && this.props.query.many && <FormGroup
                             label={"Aggregation field"}
                             labelInfo={"(optional)"}
                             labelFor={"aggregation"}
@@ -209,7 +209,7 @@ class ConditionGroup extends React.Component {
                                     onChange={this.handleAggregationAggregateChange()}
                             />
                         </FormGroup>}
-                        {this.props.query.aggregate && <FormGroup
+                        {!this.props.isRoot && this.props.query.aggregate && <FormGroup
                             label={"Aggregation key"}
                             labelFor="param-selector"
                             labelInfo="(required)"
@@ -226,13 +226,13 @@ class ConditionGroup extends React.Component {
                             </HTMLSelect>
                         </FormGroup>
                         }
-                        <Button className="conditionGroupButton removeGroup"
-                                icon="trash"
-                                onClick={this.onDeleteAlert()}
-                                text={"Delete"}
-                                intent="danger"
-                                minimal={true}
-                        />
+                        {!this.props.isRoot && <Button className="conditionGroupButton removeGroup"
+                                                       icon="trash"
+                                                       onClick={this.onDeleteAlert()}
+                                                       text={"Delete"}
+                                                       intent="danger"
+                                                       minimal={true}
+                        />}
 
                     </ControlGroup>
 
@@ -250,7 +250,6 @@ class ConditionGroup extends React.Component {
                                   large={false}/>
                     </FormGroup>
                 </ControlGroup>
-                }
 
                 <Alert
                     className={"Delete alert"}
