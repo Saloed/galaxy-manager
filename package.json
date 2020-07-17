@@ -58,6 +58,6 @@
     "sql-parser": "^0.5.0",
     "flora-sql-parser": "^0.9.3",
     "js-sql-parser": "^1.0.7",
-    "lodash": "^4.17.11"
+    "lodash": "^4.17.19"
   }
 }
